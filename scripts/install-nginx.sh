@@ -17,7 +17,7 @@ http {
 	}
 }
 EOF
-#systemctl restart nginx
+systemctl restart nginx
 
 apt install -y openssl
 
