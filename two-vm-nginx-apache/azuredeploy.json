@@ -4,12 +4,14 @@
     "parameters": {
     "storageSufix": {
     "type": "string",
+    "defaultValue": "[resourceGroup().name]",
     "metadata": {
         "description": "Sufix to storageAccount."
             }
     },
     "adminUsername": {
       "type": "string",
+      "defaultValue": "vm",
       "metadata": {
         "description": "Username for the Virtual Machine."
             }
@@ -26,29 +28,35 @@
         "location": "[resourceGroup().location]", 
         "vmName1": "ubuntuVM1",
         "vmName2": "ubuntuVM2",
+        "ubuntuOS": "18.04-LTS",
         "publicIP1": "[concat(variables('vmName1'), '-PublicIP')]",
         "publicIP2": "[concat(variables('vmName2'), '-PublicIP')]",
         "storageName": "[concat('storageaccount', parameters('storageSufix'))]",
-        "scriptUrlInstallApache": "https://raw.githubusercontent.com/elishani/Azure_ARM_template/master/scripts/install-apache.sh",
-        "scriptUrlInstallNginx": "https://raw.githubusercontent.com/elishani/Azure_ARM_template/master/scripts/install-nginx.sh"
+        "nsgName": "ubuntuVM-nsg",
+        "VirtualNetworkName": "ubuntuVM-VirtualNetwork",
+        "interfaceName1": "[concat(variables('vmName1'), '-NetworkInterface')]",
+        "interfaceName2": "[concat(variables('vmName2'), '')]",
+        "subNetName": "[concat(variables('VirtualNetworkName'), '-Subnet')]",
+        "_artifactsLocation": "https://raw.githubusercontent.com/elishani/azure-templates/master/scripts/",
+        "_artifactsLocationSasToken": ""
     },
     "resources": [
         {
-            "name": "[variables('storageName')]",
             "type": "Microsoft.Storage/storageAccounts",
+            "name": "[variables('storageName')]",
             "apiVersion": "2019-06-01",
             "location": "[variables('location')]",
             "tags": {
-                "displayName": "ubuntuVM1 Storage Account"
+                "displayName": "[concat(variables('vmName1'),' Storage Account')]"
             },
             "sku": {
                 "name": "Standard_LRS"
             },
             "kind": "Storage"
         },
-        {
+        {   
+            "type": "Microsoft.Network/publicIPAddresses",
             "name": "[variables('publicIP1')]",
-            "type": "Microsoft.Network/publicIPAddresses",
             "apiVersion": "2019-11-01",
             "location": "[variables('location')]",
             "tags": {
@@ -59,8 +67,8 @@
             }
         },
         {
+            "type": "Microsoft.Network/publicIPAddresses",
             "name": "[variables('publicIP2')]",
-            "type": "Microsoft.Network/publicIPAddresses",
             "apiVersion": "2019-11-01",
             "location": "[variables('location')]",
             "tags": {
@@ -71,7 +79,7 @@
             }
         },
         {
-            "name": "ubuntuVM-nsg",
+            "name": "[variables('nsgName')]",
             "type": "Microsoft.Network/networkSecurityGroups",
             "apiVersion": "2018-08-01",
             "location": "[variables('location')]",
@@ -95,15 +103,15 @@
             }
         },
         {
-            "name": "ubuntuVM-VirtualNetwork",
             "type": "Microsoft.Network/virtualNetworks",
+            "name": "[variables('VirtualNetworkName')]", 
             "apiVersion": "2019-11-01",
             "location": "[variables('location')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/networkSecurityGroups', 'ubuntuVM-nsg')]"
+                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsgName'))]"
             ],
             "tags": {
-                "displayName": "ubuntuVM-VirtualNetwork"
+                "displayName": "[variables('VirtualNetworkName')]"
             },
             "properties": {
                 "addressSpace": {
@@ -113,11 +121,11 @@
                 },
                 "subnets": [
                     {
-                        "name": "ubuntuVM-VirtualNetwork-Subnet",
+                        "name": "[variables('subNetName')]",
                         "properties": {
                             "addressPrefix": "10.0.0.0/24",
                             "networkSecurityGroup": {
-                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'ubuntuVM-nsg')]"
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsgName'))]"
                             }
                         }
                     }
@@ -125,16 +133,16 @@
             }
         },
         {
-            "name": "ubuntuVM1-NetworkInterface",
             "type": "Microsoft.Network/networkInterfaces",
+            "name": "[variables('interfaceName1')]",
             "apiVersion": "2019-11-01",
             "location": "[variables('location')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/publicIPAddresses', 'ubuntuVM1-PublicIP')]",
-                "[resourceId('Microsoft.Network/virtualNetworks', 'ubuntuVM-VirtualNetwork')]"
+                "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIP1'))]",
+                "[resourceId('Microsoft.Network/virtualNetworks', variables('VirtualNetworkName'))]"
             ],
             "tags": {
-                "displayName": "ubuntuVM1-NetworkInterface"
+                "displayName": "[variables('interfaceName1')]"
             },
             "properties": {
                 "ipConfigurations": [
@@ -143,27 +151,27 @@
                         "properties": {
                             "privateIPAllocationMethod": "Dynamic",
                             "publicIPAddress": {
-                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', 'ubuntuVM1-PublicIP')]"
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIP1'))]"
                             },
                             "subnet": {
-                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', 'ubuntuVM-VirtualNetwork', 'ubuntuVM-VirtualNetwork-Subnet')]"
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('VirtualNetworkName'), variables('subNetName'))]"
                             }
                         }
                     }
                 ]
             }
         },
-        {
-            "name": "ubuntuVM2-NetworkInterface",
+        {    
             "type": "Microsoft.Network/networkInterfaces",
+            "name": "[variables('interfaceName2')]",
             "apiVersion": "2019-11-01",
             "location": "[variables('location')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/publicIPAddresses', 'ubuntuVM2-PublicIP')]",
-                "[resourceId('Microsoft.Network/virtualNetworks', 'ubuntuVM-VirtualNetwork')]"
+                "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIP2'))]",
+                "[resourceId('Microsoft.Network/virtualNetworks', variables('VirtualNetworkName'))]"
             ],
             "tags": {
-                "displayName": "ubuntuVM2-NetworkInterface"
+                "displayName": "[variables('interfaceName2')]"
             },
             "properties": {
                 "ipConfigurations": [
@@ -172,10 +180,10 @@
                         "properties": {
                             "privateIPAllocationMethod": "Dynamic",
                             "publicIPAddress": {
-                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', 'ubuntuVM2-PublicIP')]"
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIP2'))]"
                             },
                             "subnet": {
-                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', 'ubuntuVM-VirtualNetwork', 'ubuntuVM-VirtualNetwork-Subnet')]"
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('VirtualNetworkName'), variables('subNetName'))]"
                             }
                         }
                     }
@@ -183,22 +191,22 @@
             }
         },
         {
-            "name": "ubuntuVM1",
             "type": "Microsoft.Compute/virtualMachines",
+            "name": "[variables('vmName1')]",
             "apiVersion": "2019-07-01",
             "location": "[variables('location')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/networkInterfaces', 'ubuntuVM1-NetworkInterface')]"
+                "[resourceId('Microsoft.Network/networkInterfaces', variables('interfaceName1'))]"
             ],
             "tags": {
-                "displayName": "ubuntuVM1"
+                "displayName": "[variables('vmName1')]"
             },
             "properties": {
                 "hardwareProfile": {
                     "vmSize": "Standard_A2_v2"
                 },
                 "osProfile": {
-                    "computerName": "ubuntuVM1",
+                    "computerName": "[variables('vmName1')]",
                     "adminUsername": "[parameters('adminUsername')]",
                     "adminPassword": "[parameters('adminPassword')]"
                 },
@@ -206,11 +214,11 @@
                     "imageReference": {
                         "publisher": "Canonical",
                         "offer": "UbuntuServer",
-                        "sku": "18.04-LTS",
+                        "sku": "[variables('ubuntuOS')]",
                         "version": "latest"
                     },
                     "osDisk": {
-                        "name": "ubuntuVM1-OSDisk",
+                        "name": "[concat(variables('vmName1'), '-OSDisk')]",
                         "caching": "ReadWrite",
                         "createOption": "FromImage"
                     }
@@ -218,7 +226,7 @@
                 "networkProfile": {
                     "networkInterfaces": [
                         {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces', 'ubuntuVM1-NetworkInterface')]"
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('interfaceName1'))]"
                         }
                     ]
                 },
@@ -231,22 +239,22 @@
             }
         },
         {
-            "name": "ubuntuVM2",
             "type": "Microsoft.Compute/virtualMachines",
+            "name": "[variables('vmName2')]",
             "apiVersion": "2019-07-01",
             "location": "[variables('location')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/networkInterfaces', 'ubuntuVM2-NetworkInterface')]"
+                "[resourceId('Microsoft.Network/networkInterfaces', variables('interfaceName2'))]"
             ],
             "tags": {
-                "displayName": "ubuntuVM2"
+                "displayName": "[variables('vmName2')]"
             },
             "properties": {
                 "hardwareProfile": {
                     "vmSize": "Standard_A2_v2"
                 },
                 "osProfile": {
-                    "computerName": "ubuntuVM2",
+                    "computerName": "[variables('vmName2')]",
                     "adminUsername": "[parameters('adminUsername')]",
                     "adminPassword": "[parameters('adminPassword')]"
                 },
@@ -254,11 +262,11 @@
                     "imageReference": {
                         "publisher": "Canonical",
                         "offer": "UbuntuServer",
-                        "sku": "18.04-LTS",
+                        "sku": "[variables('ubuntuOS')]",
                         "version": "latest"
                     },
                     "osDisk": {
-                        "name": "ubuntuVM2-OSDisk",
+                        "name": "[concat(variables('vmName2'), '-OSDisk')]",
                         "caching": "ReadWrite",
                         "createOption": "FromImage"
                     }
@@ -266,7 +274,7 @@
                 "networkProfile": {
                     "networkInterfaces": [
                         {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces', 'ubuntuVM2-NetworkInterface')]"
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('interfaceName2'))]"
                         }
                     ]
                 },
@@ -279,12 +287,12 @@
             }
         },
         {
-            "apiVersion": "2015-05-01-preview",
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "ubuntuVM1/install-nginx",
+            "name": "[concat(variables('vmName1'), '/install-nginx')]",
+            "apiVersion": "2020-06-01",
             "location": "[variables('location')]",
             "dependsOn": [
-                "Microsoft.Compute/virtualMachines/ubuntuVM1"
+                "[concat('Microsoft.Compute/virtualMachines/',variables('vmName1'))]"
             ],
             "properties": {
             "publisher": "Microsoft.Azure.Extensions",
@@ -293,19 +301,19 @@
             "autoUpgradeMinorVersion": true,
             "settings": {
             "fileUris": [
-                "[variables('scriptUrlInstallNginx')]"
+                "[uri(variables('_artifactsLocation'), concat('install-nginx.sh', variables('_artifactsLocationSasToken')))]"
             ],
             "commandToExecute": "sh install-nginx.sh"
             }
         }
-    },
+        },
         {
-            "apiVersion": "2015-05-01-preview",
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "ubuntuVM2/install-apache",
+            "name": "[concat(variables('vmName2'),'/istall-apache')]",
+            "apiVersion": "2020-06-01",
             "location": "[variables('location')]",
             "dependsOn": [
-                "Microsoft.Compute/virtualMachines/ubuntuVM2"
+                 "[resourceId('Microsoft.Compute/virtualMachines/', variables('vmName2'))]"
             ],
             "properties": {
             "publisher": "Microsoft.Azure.Extensions",
@@ -313,13 +321,13 @@
             "typeHandlerVersion": "2.0",
             "autoUpgradeMinorVersion": true,
             "settings": {
-            "fileUris": [
-                "[variables('scriptUrlInstallApache')]"
-            ],
+                "fileUris": [
+                     "[uri(variables('_artifactsLocation'), concat('install-apache.sh', variables('_artifactsLocationSasToken')))]"
+                ],
             "commandToExecute": "sh install-apache.sh"
             }
         }
     }
-    ],
+],
     "outputs": {}
 }
