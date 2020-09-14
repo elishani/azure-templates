@@ -39,10 +39,10 @@
     "functions": [],
     "variables": {
         "location": "[resourceGroup().location]", 
-        "vmName1": "ubuntuVM1",
+        "vmName1": "rancher",
         "ubuntuOS": "18.04-LTS",
         "publicIP1": "[concat(variables('vmName1'), '-PublicIP')]",
-        "storageName": "[concat('storageaccount', parameters('storageSufix'))]",
+        "storageName": "[toLower( concat('staccount', parameters('storageSufix')))]",
         "nsgName": "ubuntuVM-nsg",
         "VirtualNetworkName": "ubuntuVM-VirtualNetwork",
         "interfaceName1": "[concat(variables('vmName1'), '-NetworkInterface')]",

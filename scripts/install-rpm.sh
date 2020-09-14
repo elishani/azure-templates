@@ -13,4 +13,4 @@ apt -y install \
     wget \
     docker-compose
 sed -i 's/ClientAliveInterval 120/ClientAliveInterval 180/g' /etc/ssh/sshd_config
-
+mkdir -p /var/www/rancher
