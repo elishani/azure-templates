@@ -3,8 +3,8 @@
 myIp=$(ip addr  show eth0 | grep 'inet ' | awk '{print $2}' | cut -d'/' -f1)
 preIp=$(echo $myIp | cut -d'.' -f1-3)
 postIp=$(echo $myIp | cut -d'.' -f4)
-lastUp=$((postIp+1))
-lastDown=$((postIp-1))
+lastUp=`expr $postIp + 1`
+lastDown=`exper $postIp - 1`
 upIp="$preIp.$lastUp"
 downIp="$preIp.$lastDown"
 
