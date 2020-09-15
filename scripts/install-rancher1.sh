@@ -1,12 +1,12 @@
 #!/bin/bash
 
-myIp=`ip addr  show eth0 | grep 'inet ' | awk '{print $2}' | cut -d'/' -f1`
-preIp=`echo $myIp | cut -d'.' -f1-3`
-postIp=`echo $myIp | cut -d'.' -f4`
-lastUp=`expr $postIp + 1`
-lastDown=`exper $postIp - 1`
-upIp="$preIp.$lastUp"
-downIp="$preIp.$lastDown"
+#myIp=`ip addr  show eth0 | grep 'inet ' | awk '{print $2}' | cut -d'/' -f1`
+#preIp=`echo $myIp | cut -d'.' -f1-3`
+#postIp=`echo $myIp | cut -d'.' -f4`
+#lastUp=`expr $postIp + 1`
+#lastDown=`exper $postIp - 1`
+#upIp="$preIp.$lastUp"
+#downIp="$preIp.$lastDown"
 
 #i=5
 #while true; do
@@ -47,6 +47,7 @@ sed -i 's/ClientAliveInterval 120/ClientAliveInterval 180/g' /etc/ssh/sshd_confi
 
 my_ip=$(ip adde )
 mkdir -p /var/www/rancher
+cd /var/www/rancher
 cat > docker-compose.yml <<EOF
 version: '2'
 services:
