@@ -51,9 +51,9 @@
         "subNetName": "[concat(variables('VirtualNetworkName'), '-Subnet')]",
         "_artifactsLocation": "https://raw.githubusercontent.com/elishani/azure-templates/master/scripts/",
         "_artifactsLocationSasToken": "",
-         "scriptName1": "install-rancher1",
-        "scriptNameSh1": "[concat(variables('scriptName1'), '.sh')]",
-         "scriptName2": "install-rancher2",
+        "scriptName1": "install-rancher1",
+        "scriptName2": "install-rancher2",
+        "scriptNameSh1": "[concat(variables('scriptName1'), '.sh')]", 
         "scriptNameSh2": "[concat(variables('scriptName2'), '.sh')]",
         "linuxConfiguration": {
           "disablePasswordAuthentication": true,
@@ -317,11 +317,11 @@
         },
         {
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(variables('vmName1'), '/', variables('scriptName1'))]",
+            "name": "[concat(variables('vmName1'),'/', variables('scriptName1'))]",
             "apiVersion": "2020-06-01",
             "location": "[variables('location')]",
             "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/',variables('vmName1'))]"
+                 "[resourceId('Microsoft.Compute/virtualMachines/', variables('vmName1'))]"
             ],
             "properties": {
             "publisher": "Microsoft.Azure.Extensions",
@@ -329,12 +329,12 @@
             "typeHandlerVersion": "2.0",
             "autoUpgradeMinorVersion": true,
             "settings": {
-            "fileUris": [
-                "[uri(variables('_artifactsLocation'), concat(variables('scriptNameSh1'), variables('_artifactsLocationSasToken')))]"
-            ],
-            "commandToExecute": "concat('sh ', variables('scriptNameSh1'))"
+                "fileUris": [
+                     "[uri(variables('_artifactsLocation'), concat(variables('scriptNameSh1'), variables('_artifactsLocationSasToken')))]"
+                ],
+            "commandToExecute": "[concat('sh ', variables('scriptNameSh1'))]"
+                }
             }
-        }
         },
         {
             "type": "Microsoft.Compute/virtualMachines/extensions",
