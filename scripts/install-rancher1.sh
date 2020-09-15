@@ -8,27 +8,27 @@ lastDown=`exper $postIp - 1`
 upIp="$preIp.$lastUp"
 downIp="$preIp.$lastDown"
 
-i=5
-while true; do
-	ping -c1 $upIp
-	if [ $? = 0  ]; then
-		station2=$upIp
-		break
-	fi
-	ping -c1 $downIp
-	if [ $? = 0  ]; then
-                station2=$downIp
-                break
-	fi
-	i=`expr $i - 1`
-	[ $i = 0 ] && break
-done
-if [ -z $station2 ]; then
-        echo "No ping to other machine"
-else
-        echo "$station2 rancher2" >> /etc/hosts
-fi
-
+#i=5
+#while true; do
+#	ping -c1 $upIp
+#	if [ $? = 0  ]; then
+#		station2=$upIp
+#		break
+#	fi
+#	ping -c1 $downIp
+#	if [ $? = 0  ]; then
+#                station2=$downIp
+#                break
+#	fi
+#	i=`expr $i - 1`
+#	[ $i = 0 ] && break
+#done
+#if [ -z $station2 ]; then
+#        echo "No ping to other machine"
+#else
+#        echo "$station2 rancher2" >> /etc/hosts
+#fi
+#
 
 apt update
 
