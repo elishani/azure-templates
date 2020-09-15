@@ -17,6 +17,7 @@ sed -i 's/ClientAliveInterval 120/ClientAliveInterval 180/g' /etc/ssh/sshd_confi
 
 my_ip=$(ip adde )
 mkdir -p /var/www/rancher
+cd /var/www/rancher
 cat > docker-compose.yml <<EOF
 version: '2'
 services:
