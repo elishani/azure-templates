@@ -43,7 +43,7 @@
         "ubuntuOS": "18.04-LTS",
         "publicIP1": "[concat(variables('vmName1'), '-PublicIP')]",
         "publicIP2": "[concat(variables('vmName2'), '-PublicIP')]",
-        "storageName": "[concat('storageaccount', parameters('storageSufix'))]",
+        "storageName": "[ toLower(concat('storage', parameters('storageSufix')))]",
         "nsgName": "ubuntuVM-nsg",
         "VirtualNetworkName": "ubuntuVM-VirtualNetwork",
         "interfaceName1": "[concat(variables('vmName1'), '-NetworkInterface')]",
@@ -332,7 +332,7 @@
             "fileUris": [
                 "[uri(variables('_artifactsLocation'), concat(variables('scriptNameSh1'), variables('_artifactsLocationSasToken')))]"
             ],
-            "commandToExecute": "sh install-nginx.sh"
+            "commandToExecute": "concat('sh ', variables('scriptNameSh1'))"
             }
         }
         },
