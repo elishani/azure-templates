@@ -11,8 +11,7 @@ apt -y install \
     ca-certificates \
     software-properties-common \
     docker-ce \
-    wget \
-    docker-compose
+    wget
 sed -i 's/ClientAliveInterval 120/ClientAliveInterval 180/g' /etc/ssh/sshd_config
 
 my_ip=$(ip adde )
