@@ -63,10 +63,7 @@ if [ -z $vm2 ]; then
         echo "No ping to other machine"
 fi
 
-temp_user=eli
-temp_passwd=temp
-useradd -m -d /home/$temp_user $temp_user
-echo -e "$temp_passwd\n$temp_passwd" | passwd $temp_user
+
 cat > /tmp/install_client.sh<<'EOF'
 ssh-keygen -q -t rsa -N '' <<< ""$'\n'"y" 2>&1 >/dev/null
 sshpass -p "$temp_passwd" ssh-copy-id $vm2
