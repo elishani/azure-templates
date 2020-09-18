@@ -20,6 +20,7 @@ apt install -y kubelet kubeadm kubectl
 
 temp_user=eli
 temp_passwd=temp
+echo "Create user $temp_user"
 useradd -m -d /home/$temp_user $temp_user
 echo "$temp_passwd\n$temp_passwd" | passwd $temp_user
 
@@ -73,12 +74,8 @@ if [ -z $vm2 ]; then
 		exit 1
 fi
 
-#cat > /tmp/install_key.sh<<'EOF'
-#ssh-keygen -q -t rsa -N '' <<< ""$'\n'"y"
-#EOF
-#chmod 755 /tmp/install_key.sh
-#su -c "bash /tmp/install_key.sh" - $temp_user
-su -c 'ssh-keygen -q -t rsa -N "" <<< ""$\'\n\'"y"'' - $temp_user
+echo "Create key"
+su -c 'ssh-keygen -q -t rsa -N "" <<< ""$\'\n\'"y"' - $temp_user
 
 apt update
 apt install -y sshpass
