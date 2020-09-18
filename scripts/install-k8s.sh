@@ -21,7 +21,7 @@ apt install -y kubelet kubeadm kubectl
 temp_user=eli
 temp_passwd=temp
 useradd -m -d /home/$temp_user $temp_user
-echo -e "$temp_passwd\n$temp_passwd" | passwd $temp_user
+echo "$temp_passwd\n$temp_passwd" | passwd $temp_user
 
 [ $vm_master_client = node ] && exit
 
