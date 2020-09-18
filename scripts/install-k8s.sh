@@ -71,14 +71,14 @@ if [ -z $vm2 ]; then
 		exit 1
 fi
 
-echo "Create key"
+echo "--Create key"
 su -c "echo '\n\n\n' | ssh-keygen -t rsa -N ''" - $temp_user
 
 apt update
 apt install -y sshpass
 
-su -c "sshpass -p $temp_passwd ssh-copy-id $vm2" - $temp_user
+su -c "sshpass -oStrictHostKeyChecking=no -p $temp_passwd ssh-copy-id $vm2" - $temp_user
 su -c "scp /tmp/join_to_kubernstes.sh $temp_user@$vm2" - $temp_user
 su -c "ssh $temp_user@$vm2 \"bash join_to_kubernstes.sh\"" - $temp_user
 su -c "ssh $temp_user@$vm2 \"userdel $temp_user\"" - $temp_user
-userdel $temp_user
+#userdel $temp_user
