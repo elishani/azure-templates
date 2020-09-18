@@ -1,8 +1,9 @@
 #!/bin/bash
 vm_master_client=$1
-echo "Vm is $vm_master_client"
+echo "VM is $vm_master_client"
 
 apt update
+apt install -y sshpass
 apt install -y docker.io
 systemctl enable docker
 apt update 
@@ -22,7 +23,7 @@ temp_passwd=temp
 useradd -m -d /home/$temp_user $temp_user
 echo -e "$temp_passwd\n$temp_passwd" | passwd $temp_user
 
-[ $vm_master_client == node ] && exit
+[ "$vm_master_client" == "node" ] && exit
 
 # Master
 
@@ -33,6 +34,9 @@ user_home=$(grep ':x:1000:1000:' /etc/passwd | awk -F: '{print $6}')
 masterIp=`ip addr  show eth0 | grep 'inet ' | awk '{print $2}' | cut -d'/' -f1`
 sudo kubeadm init --pod-network-cidr=10.244.0.0/16 | tee /tmp/join.temp
 egrep 'kubeadm join|--discovery-token-ca-cert-hash' /tmp/join.temp > $user_home/join_to_kubernstes.sh
+cp $user_home/join_to_kubernstes.sh /tmp
+chmod 755 /tmp/join_to_kubernstes.sh
+
 chown $user_id:$group_id /etc/kubernetes/admin.conf
 # run as user  
 cat > /tmp/install_master.sh<<'EOF'
@@ -52,17 +56,17 @@ downIp="$preIp.$lastDown"
 i=5
 while true; do
 	ping -c1 $upIp
-	if [ $? = 0  ]; then
+	if [ $? == 0  ]; then
 		vm2=$upIp
 		break
 	fi
 	ping -c1 $downIp
-	if [ $? = 0  ]; then
+	if [ $? == 0  ]; then
                 vm2=$downIp
                 break
 	fi
 	i=`expr $i - 1`
-	[ $i = 0 ] && break
+	[ $i == 0 ] && break
 done
 if [ -z $vm2 ]; then
         echo "No ping to other machine"
@@ -72,7 +76,7 @@ fi
 cat > /tmp/install_client.sh<<'EOF'
 ssh-keygen -q -t rsa -N '' <<< ""$'\n'"y" 2>&1 >/dev/null
 sshpass -p "$temp_passwd" ssh-copy-id $vm2
-scp $user_home/join_to_kubernstes.sh $vm2
+scp /tmp/join_to_kubernstes.sh $vm2
 ssh "bash join_to_kubernstes.sh" $mv2
 EOF
 
