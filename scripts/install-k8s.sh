@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -xv
 vm_master_client=$1
 echo "VM is $vm_master_client"
 
@@ -73,9 +73,12 @@ if [ -z $vm2 ]; then
 		exit 1
 fi
 
-cat > /tmp/install_key.sh<<'EOF'
-ssh-keygen -q -t rsa -N '' <<< ""$'\n'"y" 2>&1 >/tmp/install_k8s_client
-EOF
+#cat > /tmp/install_key.sh<<'EOF'
+#ssh-keygen -q -t rsa -N '' <<< ""$'\n'"y"
+#EOF
+#chmod 755 /tmp/install_key.sh
+#su -c "bash /tmp/install_key.sh" - $temp_user
+su -c 'ssh-keygen -q -t rsa -N "" <<< ""$\'\n\'"y"'' - $temp_user
 
 apt update
 apt install -y sshpass
@@ -89,8 +92,6 @@ ssh $temp_user@$vm2 "userdel $temp_user"
 } 2>&1 | tee -a /tmp/install_k8s_client.log
 EOF
 
-chmod 755 /tmp/install_key.sh /tmp/install_k8s_client.sh
-
-su -c "bash /tmp/install_key.sh" - $temp_user
+chmod 755 /tmp/install_k8s_client.sh
 su -c "bash /tmp/install_k8s_client.sh" - $temp_user
 userdel $temp_user
