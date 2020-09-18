@@ -82,10 +82,10 @@ apt install -y sshpass
 
 cat > /tmp/install_k8s_client.sh<<EOF
 {
-	sshpass -p "$temp_passwd" ssh-copy-id $vm2
-scp /tmp/join_to_kubernstes.sh $vm2
-ssh "bash join_to_kubernstes.sh" $mv2
-ssh "userdel $temp_user" $mv2
+sshpass -p "$temp_passwd" ssh-copy-id $vm2
+scp /tmp/join_to_kubernstes.sh $temp_user@$vm2
+ssh $temp_user@$vm2 "bash join_to_kubernstes.sh"
+ssh $temp_user@$vm2 "userdel $temp_user" 
 } 2>&1 | tee -a /tmp/install_k8s_client.log
 EOF
 
