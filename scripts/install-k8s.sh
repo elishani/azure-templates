@@ -59,7 +59,7 @@ while true; do
 	i=`expr $i - 1`
 	[ $i = 0 ] && break
 done
-if [ -z $station2 ]; then
+if [ -z $vm2 ]; then
         echo "No ping to other machine"
 fi
 
@@ -69,7 +69,9 @@ useradd -m -d /home/$temp_user $temp_user
 echo -e "$temp_passwd\n$temp_passwd" | passwd $temp_user
 cat > /tmp/install_client.sh<<'EOF'
 ssh-keygen -q -t rsa -N '' <<< ""$'\n'"y" 2>&1 >/dev/null
-sshpass -p "$temp_passwd" ssh-copy-id
-scp $user_home/join_to_kubernstes.sh $mv2
+sshpass -p "$temp_passwd" ssh-copy-id $vm2
+scp $user_home/join_to_kubernstes.sh $vm2
 ssh "bash join_to_kubernstes.sh" $mv2
 EOF
+
+su -c "bash /tmp/install_client.sh" - $temp_user
