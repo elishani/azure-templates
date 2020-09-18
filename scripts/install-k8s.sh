@@ -20,7 +20,7 @@ apt install -y kubelet kubeadm kubectl
 
 temp_user=eli
 temp_passwd=temp
-echo "Create user $temp_user"
+echo "--Create user $temp_user"
 useradd -m -d /home/$temp_user $temp_user
 echo "$temp_passwd\n$temp_passwd" | passwd $temp_user
 
@@ -39,13 +39,10 @@ cp $user_home/join_to_kubernstes.sh /tmp
 chmod 755 /tmp/join_to_kubernstes.sh
 
 chown $user_id:$group_id /etc/kubernetes/admin.conf
-# run as user  
-cat > /tmp/install_master.sh<<'EOF'
-mkdir -p $HOME/.kube
-cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-kubectl apply -f https://github.com/coreos/flannel/raw/master/Documentation/kube-flannel.yml
-EOF
-su -c "bash /tmp/install_master.sh" - $user
+
+su -c "mkdir -p $user_home/.kube" - $user
+su -c "cp -i /etc/kubernetes/admin.conf $user_home/.kube/config" - $user
+su -c "kubectl apply -f https://github.com/coreos/flannel/raw/master/Documentation/kube-flannel.yml" - $user
 
 myIp=`ip addr  show eth0 | grep 'inet ' | awk '{print $2}' | cut -d'/' -f1`
 preIp=`echo $myIp | cut -d'.' -f1-3`
@@ -75,20 +72,13 @@ if [ -z $vm2 ]; then
 fi
 
 echo "Create key"
-su -c 'ssh-keygen -q -t rsa -N "" <<< ""$\'\n\'"y"' - $temp_user
+su -c "echo '\n\n\n' | ssh-keygen -t rsa -N ''" - $temp_user
 
 apt update
 apt install -y sshpass
 
-cat > /tmp/install_k8s_client.sh<<EOF
-{
-sshpass -p "$temp_passwd" ssh-copy-id $vm2
-scp /tmp/join_to_kubernstes.sh $temp_user@$vm2
-ssh $temp_user@$vm2 "bash join_to_kubernstes.sh"
-ssh $temp_user@$vm2 "userdel $temp_user" 
-} 2>&1 | tee -a /tmp/install_k8s_client.log
-EOF
-
-chmod 755 /tmp/install_k8s_client.sh
-su -c "bash /tmp/install_k8s_client.sh" - $temp_user
+su -c "sshpass -p $temp_passwd ssh-copy-id $vm2" - $temp_user
+su -c "scp /tmp/join_to_kubernstes.sh $temp_user@$vm2" - $temp_user
+su -c "ssh $temp_user@$vm2 \"bash join_to_kubernstes.sh\"" - $temp_user
+su -c "ssh $temp_user@$vm2 \"userdel $temp_user\"" - $temp_user
 userdel $temp_user
