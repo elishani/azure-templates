@@ -22,8 +22,18 @@ temp_user=eli
 temp_passwd=temp
 useradd -m -d /home/$temp_user $temp_user
 echo -e "$temp_passwd\n$temp_passwd" | passwd $temp_user
+endFlag=/tmp/end_flag
 
-[ "$vm_master_client" == "node" ] && exit
+if [ $vm_master_client = node ]; then
+	while true; do
+		if [ -e $endFlag]; then
+			rm -f $endFlag
+			exit 0
+		fi
+		sleep 5
+	done
+fi
+
 
 # Master
 
@@ -56,17 +66,17 @@ downIp="$preIp.$lastDown"
 i=5
 while true; do
 	ping -c1 $upIp
-	if [ $? == 0  ]; then
+	if [ $? = 0  ]; then
 		vm2=$upIp
 		break
 	fi
 	ping -c1 $downIp
-	if [ $? == 0  ]; then
+	if [ $? = 0  ]; then
                 vm2=$downIp
                 break
 	fi
 	i=`expr $i - 1`
-	[ $i == 0 ] && break
+	[ $i = 0 ] && break
 done
 if [ -z $vm2 ]; then
         echo "No ping to other machine"
@@ -78,6 +88,8 @@ ssh-keygen -q -t rsa -N '' <<< ""$'\n'"y" 2>&1 >/dev/null
 sshpass -p "$temp_passwd" ssh-copy-id $vm2
 scp /tmp/join_to_kubernstes.sh $vm2
 ssh "bash join_to_kubernstes.sh" $mv2
+ssh "touch $endFlag" $mv2
 EOF
 
 su -c "bash /tmp/install_client.sh" - $temp_user
+userdel $temp_user
