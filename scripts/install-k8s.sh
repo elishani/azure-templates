@@ -71,19 +71,20 @@ while true; do
 done
 if [ -z $vm2 ]; then
         echo "No ping to other machine"
+		exit 1
 fi
 
 cat > /tmp/install_key.sh<<'EOF'
-ssh-keygen -q -t rsa -N '' <<< ""$'\n'"y" 2>&1 >/dev/null
+ssh-keygen -q -t rsa -N '' << ""$'\n'"y" 2>&1 >/tmp/key.log
 EOF
 
 cat > /tmp/install_k8s_client.sh<<EOF
-sshpass -p \"$temp_passwd\" ssh-copy-id $vm2
+sshpass -p "$temp_passwd" ssh-copy-id $vm2
 scp /tmp/join_to_kubernstes.sh $vm2
-ssh \"bash join_to_kubernstes.sh\" $mv2
-ssh \"userdel $temp_user\" $mv2
+ssh "bash join_to_kubernstes.sh" $mv2
+ssh "userdel $temp_user" $mv2
 EOF
 
-su -c "bash /tmp/install_client.sh" - $temp_user
+su -c "bash /tmp/install_key.sh" - $temp_user
 su -c "bash /tmp/install_k8s_client.sh" - $temp_user
 userdel $temp_user
