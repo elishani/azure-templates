@@ -24,16 +24,7 @@ useradd -m -d /home/$temp_user $temp_user
 echo -e "$temp_passwd\n$temp_passwd" | passwd $temp_user
 endFlag=/tmp/end_flag
 
-if [ $vm_master_client = node ]; then
-	while true; do
-		if [ -e $endFlag]; then
-			rm -f $endFlag
-			exit 0
-		fi
-		sleep 5
-	done
-fi
-
+[ $vm_master_client = node ] && exit
 
 # Master
 
@@ -82,14 +73,17 @@ if [ -z $vm2 ]; then
         echo "No ping to other machine"
 fi
 
-
-cat > /tmp/install_client.sh<<'EOF'
+cat > /tmp/install_key.sh<<'EOF'
 ssh-keygen -q -t rsa -N '' <<< ""$'\n'"y" 2>&1 >/dev/null
-sshpass -p "$temp_passwd" ssh-copy-id $vm2
+EOF
+
+cat > /tmp/install_k8s_client.sh<<EOF
+sshpass -p \"$temp_passwd\" ssh-copy-id $vm2
 scp /tmp/join_to_kubernstes.sh $vm2
-ssh "bash join_to_kubernstes.sh" $mv2
-ssh "touch $endFlag" $mv2
+ssh \"bash join_to_kubernstes.sh\" $mv2
+ssh \"userdel $temp_user\" $mv2
 EOF
 
 su -c "bash /tmp/install_client.sh" - $temp_user
+su -c "bash /tmp/install_k8s_client.sh" - $temp_user
 userdel $temp_user
