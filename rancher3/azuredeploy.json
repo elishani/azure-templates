@@ -332,10 +332,31 @@
                 "fileUris": [
                      "[uri(variables('_artifactsLocation'), concat(variables('scriptNameSh1'), variables('_artifactsLocationSasToken')))]"
                 ],
-            "commandToExecute": "[concat('sh ', variables('scriptNameSh1'))]"
+            "commandToExecute": "[concat('sh ', variables('scriptNameSh1'), ' master')]"
                 }
             }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(variables('vmName2'),'/', variables('scriptName2'))]",
+            "apiVersion": "2020-06-01",
+            "location": "[variables('location')]",
+            "dependsOn": [
+                 "[resourceId('Microsoft.Compute/virtualMachines/', variables('vmName2'))]"
+            ],
+            "properties": {
+            "publisher": "Microsoft.Azure.Extensions",
+            "type": "CustomScript",
+            "typeHandlerVersion": "2.0",
+            "autoUpgradeMinorVersion": true,
+            "settings": {
+                "fileUris": [
+                     "[uri(variables('_artifactsLocation'), concat(variables('scriptNameSh2'), variables('_artifactsLocationSasToken')))]"
+                ],
+            "commandToExecute": "[concat('sh ', variables('scriptNameSh2'), ' node')]"
+            }
         }
+    }
 ],
     "outputs": {}
 }

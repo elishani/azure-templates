@@ -1,4 +1,7 @@
 #!/bin/bash
+vm_master_client=$1
+echo "Vm is $vm_master_client"
+
 apt update
 apt install -y docker.io
 systemctl enable docker
@@ -18,6 +21,8 @@ temp_user=eli
 temp_passwd=temp
 useradd -m -d /home/$temp_user $temp_user
 echo -e "$temp_passwd\n$temp_passwd" | passwd $temp_user
+
+[ $vm_master_client == node ] && exit
 
 # Master
 
