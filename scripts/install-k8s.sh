@@ -21,6 +21,9 @@ user_id=1000
 group_id=1000
 chown $user_id:$group_id /etc/kubernetes/admin.conf
 # run as user  
-su -c "mkdir -p $HOME/.kube" - $user
-su -c "cp -i /etc/kubernetes/admin.conf $HOME/.kube/config" - $user
-su -c "kubectl apply -f https://github.com/coreos/flannel/raw/master/Documentation/kube-flannel.yml" - $user
+cat > /tmp/install.sh<<'EOF'
+mkdir -p $HOME/.kube
+cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+kubectl apply -f https://github.com/coreos/flannel/raw/master/Documentation/kube-flannel.yml
+EOF
+su -c "bash /tmp/install.sh" - $user
