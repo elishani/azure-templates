@@ -74,17 +74,19 @@ if [ -z $vm2 ]; then
 fi
 
 cat > /tmp/install_key.sh<<'EOF'
-ssh-keygen -q -t rsa -N '' <<< ""$'\n'"y" 2>&1 >/tmp/key.log
+ssh-keygen -q -t rsa -N '' <<< ""$'\n'"y" 2>&1 >/tmp/install_k8s_client
 EOF
 
 apt update
 apt install -y sshpass
 
 cat > /tmp/install_k8s_client.sh<<EOF
-sshpass -p "$temp_passwd" ssh-copy-id $vm2
+{
+	sshpass -p "$temp_passwd" ssh-copy-id $vm2
 scp /tmp/join_to_kubernstes.sh $vm2
 ssh "bash join_to_kubernstes.sh" $mv2
 ssh "userdel $temp_user" $mv2
+} 2>&1 | tee -a /tmp/install_k8s_client.log
 EOF
 
 chmod 755 /tmp/install_key.sh /tmp/install_k8s_client.sh
