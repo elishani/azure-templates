@@ -3,7 +3,6 @@ vm_master_client=$1
 echo "VM is $vm_master_client"
 
 apt update
-apt install -y sshpass
 apt install -y docker.io
 systemctl enable docker
 apt update 
@@ -14,6 +13,7 @@ deb https://apt.kubernetes.io/ kubernetes-xenial main
 EOF
 apt update
 apt install -y kubelet kubeadm kubectl
+
 #apt-mark hold kubelet kubeadm kubectl
 
 # Create temporery user
@@ -22,7 +22,6 @@ temp_user=eli
 temp_passwd=temp
 useradd -m -d /home/$temp_user $temp_user
 echo -e "$temp_passwd\n$temp_passwd" | passwd $temp_user
-endFlag=/tmp/end_flag
 
 [ $vm_master_client = node ] && exit
 
@@ -75,8 +74,11 @@ if [ -z $vm2 ]; then
 fi
 
 cat > /tmp/install_key.sh<<'EOF'
-ssh-keygen -q -t rsa -N '' << ""$'\n'"y" 2>&1 >/tmp/key.log
+ssh-keygen -q -t rsa -N '' <<< ""$'\n'"y" 2>&1 >/tmp/key.log
 EOF
+
+apt update
+apt install -y sshpass
 
 cat > /tmp/install_k8s_client.sh<<EOF
 sshpass -p "$temp_passwd" ssh-copy-id $vm2
@@ -84,6 +86,8 @@ scp /tmp/join_to_kubernstes.sh $vm2
 ssh "bash join_to_kubernstes.sh" $mv2
 ssh "userdel $temp_user" $mv2
 EOF
+
+chmod 755 /tmp/install_key.sh /tmp/install_k8s_client.sh
 
 su -c "bash /tmp/install_key.sh" - $temp_user
 su -c "bash /tmp/install_k8s_client.sh" - $temp_user
