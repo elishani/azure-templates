@@ -13,12 +13,13 @@ apt install -y kubelet kubeadm kubectl
 #apt-mark hold kubelet kubeadm kubectl
 
 # Master
-masterIp=`ip addr  show eth0 | grep 'inet ' | awk '{print $2}' | cut -d'/' -f1`
-sudo kubeadm init --pod-network-cidr=10.244.0.0/16 | tee /tmp/join.temp
-egrep 'kubeadm join|--discovery-token-ca-cert-hash' /tmp/join.temp > $HOME/join_to_kubernstes.sh
 user=$(grep ':x:1000:1000:' /etc/passwd | awk -F: '{print $1}')
 user_id=1000
 group_id=1000
+user_home=$(grep ':x:1000:1000:' /etc/passwd | awk -F: '{print $6}')
+masterIp=`ip addr  show eth0 | grep 'inet ' | awk '{print $2}' | cut -d'/' -f1`
+sudo kubeadm init --pod-network-cidr=10.244.0.0/16 | tee /tmp/join.temp
+egrep 'kubeadm join|--discovery-token-ca-cert-hash' /tmp/join.temp > $user_home/join_to_kubernstes.sh
 chown $user_id:$group_id /etc/kubernetes/admin.conf
 # run as user  
 cat > /tmp/install.sh<<'EOF'
