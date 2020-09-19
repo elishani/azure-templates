@@ -1,13 +1,18 @@
 apt update
 
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable"
 apt -y install \
-    docker-compose \
-    curl \
     apt-transport-https \
     ca-certificates \
-    software-properties-common \
-    docker-ce \
-    wget
-sed -i 's/ClientAliveInterval 120/ClientAliveInterval 180/g' /etc/ssh/sshd_config
+    curl \
+    gnupg-agent \
+    software-properyies-common
+
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+apt fingerprint 0EBFCD88 
+
+add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+
+apt update
+
+apt install -y docker-ce docker-ce-cli containerd.io
