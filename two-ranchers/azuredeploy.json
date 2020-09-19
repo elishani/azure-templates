@@ -51,8 +51,8 @@
         "subNetName": "[concat(variables('VirtualNetworkName'), '-Subnet')]",
         "_artifactsLocation": "https://raw.githubusercontent.com/elishani/azure-templates/master/scripts/",
         "_artifactsLocationSasToken": "",
-        "scriptName1": "install-rancher1",
-        "scriptName2": "install-rancher2",
+        "scriptName1": "install-docker-egine",
+        "scriptName2": "install-docker-egine",
         "scriptNameSh1": "[concat(variables('scriptName1'), '.sh')]", 
         "scriptNameSh2": "[concat(variables('scriptName2'), '.sh')]",
         "linuxConfiguration": {
