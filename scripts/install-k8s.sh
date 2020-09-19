@@ -22,8 +22,8 @@ user=$(grep ':x:1000:1000:' /etc/passwd | awk -F: '{print $1}')
 user_id=1000
 group_id=1000
 user_home=$(grep ':x:1000:1000:' /etc/passwd | awk -F: '{print $6}')
-temp_passwd=temp
-echo "$temp_passwd\n$temp_passwd" | passwd $user
+#temp_passwd=temp
+i#echo "$temp_passwd\n$temp_passwd" | passwd $user
 
 [ $vm_master_client = node ] && exit
 
