@@ -77,12 +77,12 @@ su -c "echo \"\n\" | ssh-keygen -t rsa -N ''" - $temp_user
 apt update
 apt install -y sshpass
 
-cat > /tmp/add_client.sh <<EOF
-sshpass -p $temp_passwd ssh-copy-id $vm2
-scp /tmp/join_to_kubernstes.sh $temp_user@$vm2
-ssh $temp_user@$vm2 "bash join_to_kubernstes.sh"
-#su -c "ssh $temp_user@$vm2 \"userdel $temp_user\"" - $temp_user
-#userdel $temp_user
-EOF
-
-su -c "bash /tmp/add_client.sh" - $temp_user
+#cat > /tmp/add_client.sh <<EOF
+#sshpass -p $temp_passwd ssh-copy-id $temp_user@$vm2
+#scp /tmp/join_to_kubernstes.sh $temp_user@$vm2
+#ssh $temp_user@$vm2 "bash join_to_kubernstes.sh"
+##su -c "ssh $temp_user@$vm2 \"userdel $temp_user\"" - $temp_user
+##userdel $temp_user
+#EOF
+#
+#su -c "bash /tmp/add_client.sh" - $temp_user
