@@ -18,20 +18,18 @@ apt install -y kubelet kubeadm kubectl
 
 # Create temporery user
 
-temp_user=eli
+user=$(grep ':x:1000:1000:' /etc/passwd | awk -F: '{print $1}')
+user_id=1000
+group_id=1000
+user_home=$(grep ':x:1000:1000:' /etc/passwd | awk -F: '{print $6}')
 temp_passwd=temp
-echo "--Create user $temp_user"
-useradd -m -d /home/$temp_user $temp_user
-echo "$temp_passwd\n$temp_passwd" | passwd $temp_user
+echo "$temp_passwd\n$temp_passwd" | passwd $user
 
 [ $vm_master_client = node ] && exit
 
 # Master
 
-user=$(grep ':x:1000:1000:' /etc/passwd | awk -F: '{print $1}')
-user_id=1000
-group_id=1000
-user_home=$(grep ':x:1000:1000:' /etc/passwd | awk -F: '{print $6}')
+
 masterIp=`ip addr  show eth0 | grep 'inet ' | awk '{print $2}' | cut -d'/' -f1`
 sudo kubeadm init --pod-network-cidr=10.244.0.0/16 | tee /tmp/join.temp
 egrep 'kubeadm join|--discovery-token-ca-cert-hash' /tmp/join.temp > $user_home/join_to_kubernstes.sh
@@ -81,8 +79,7 @@ apt install -y sshpass
 #sshpass -p $temp_passwd ssh-copy-id $temp_user@$vm2
 #scp /tmp/join_to_kubernstes.sh $temp_user@$vm2
 #ssh $temp_user@$vm2 "bash join_to_kubernstes.sh"
-##su -c "ssh $temp_user@$vm2 \"userdel $temp_user\"" - $temp_user
-##userdel $temp_user
+
 #EOF
 #
 #su -c "bash /tmp/add_client.sh" - $temp_user
