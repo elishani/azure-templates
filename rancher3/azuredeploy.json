@@ -135,7 +135,7 @@
                             "description": "description",
                             "protocol": "Tcp",
                             "sourcePortRange": "*",
-                            "destinationPortRanges": ["22", "80", "443", "6443"],
+                            "destinationPortRanges": ["22", "80", "443", "6443", "8080"],
                             "sourceAddressPrefix": "*",
                             "destinationAddressPrefix": "*",
                             "access": "Allow",
