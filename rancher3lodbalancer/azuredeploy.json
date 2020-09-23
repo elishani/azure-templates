@@ -4,6 +4,7 @@
   "parameters": {
     "projectName": {
       "type": "string",
+      "defaultValue": "linnovate",
       "metadata": {
         "description": "Specifies a project name that is used for generating resource names."
       }
@@ -17,6 +18,13 @@
     },
     "adminUsername": {
       "type": "string",
+      "defaultValue": "vm",
+      "metadata": {
+        "description": "Specifies the virtual machine administrator username."
+      }
+    },
+    "numberOfVMs": {
+      "type": "int",
       "metadata": {
         "description": "Specifies the virtual machine administrator username."
       }
@@ -41,8 +49,11 @@
     "vNetSubnetName": "BackendSubnet",
     "vNetSubnetAddressPrefix": "10.0.1.0/24",
     "vmStorageAccountType": "Standard_LRS",
-    "VMnumber": 3,
-    "vmSize": "Standard_DS1_v2"
+    "vmSize": "Standard_DS1_v2",
+    "_artifactsLocation": "https://raw.githubusercontent.com/elishani/azure-templates/master/scripts/",
+    "_artifactsLocationSasToken": "",
+    "scriptName": "install-rancher",
+    "scriptNameSh": "[concat(variables('scriptName'), '.sh')]"
   },
   "resources": [
     {
@@ -131,18 +142,19 @@
       "properties": {
         "securityRules": [
           {
-            "name": "AllowHTTPInbound",
+            "name": "nsgRule1",
             "properties": {
-              "protocol": "*",
-              "sourcePortRange": "*",
-              "destinationPortRange": "80",
-              "sourceAddressPrefix": "Internet",
-              "destinationAddressPrefix": "*",
-              "access": "Allow",
-              "priority": 100,
-              "direction": "Inbound"
-            }
+            "description": "description",
+            "protocol": "Tcp",
+            "sourcePortRange": "*",
+            "destinationPortRanges": ["22", "80", "443", "8080", "6433"],
+            "sourceAddressPrefix": "*",
+            "destinationAddressPrefix": "*",
+            "access": "Allow",
+            "priority": 100,
+            "direction": "Inbound"
           }
+        }
         ]
       }
     },
@@ -177,7 +189,7 @@
       ],
       "copy": {
         "name": "vmCopy",
-        "count": "[variables('VMnumber')]"
+        "count": "[parameters('numberOfVMs')]"
       },
       "dependsOn": [
         "networkInterfaceCopy"
@@ -224,7 +236,7 @@
       },
       "copy": {
         "name": "publicIPAddressCopy",
-        "count": "[variables('VMnumber')]"
+        "count": "[parameters('numberOfVMs')]"
       },
       "properties": {
         "publicIPAddressVersion": "IPv4",
@@ -238,7 +250,7 @@
       "location": "[parameters('location')]",
       "copy": {
         "name": "networkInterfaceCopy",
-        "count": "[variables('VMnumber')]"
+        "count": "[parameters('numberOfVMs')]"
       },
       "dependsOn": [
         "[resourceId('Microsoft.Network/virtualNetworks/', variables('vNetName'))]",
@@ -268,6 +280,31 @@
         ],
         "networkSecurityGroup": {
           "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsgName'))]"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(parameters('projectName'),'-vm',copyIndex(1), '/', variables('scriptName'))]",
+      "apiVersion": "2020-06-01",
+      "location": "[parameters('location')]",
+      "copy": {
+        "name": "extensionCopy",
+        "count": "[parameters('numberOfVMs')]"
+      },
+      "dependsOn": [
+            "vmCopy"
+      ],
+      "properties": {
+      "publisher": "Microsoft.Azure.Extensions",
+      "type": "CustomScript",
+      "typeHandlerVersion": "2.0",
+      "autoUpgradeMinorVersion": true,
+      "settings": {
+          "fileUris": [
+                "[uri(variables('_artifactsLocation'), concat(variables('scriptNameSh'), variables('_artifactsLocationSasToken')))]"
+          ],
+      "commandToExecute": "[concat('sh ', variables('scriptNameSh'))]"
         }
       }
     }
