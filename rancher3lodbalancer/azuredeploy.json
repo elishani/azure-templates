@@ -25,6 +25,7 @@
     },
     "numberOfVMs": {
       "type": "int",
+      "defaultValue": 3,
       "metadata": {
         "description": "Specifies the virtual machine administrator username."
       }
@@ -52,8 +53,10 @@
     "vmSize": "Standard_DS1_v2",
     "_artifactsLocation": "https://raw.githubusercontent.com/elishani/azure-templates/master/scripts/",
     "_artifactsLocationSasToken": "",
-    "scriptName": "install-rancher",
-    "scriptNameSh": "[concat(variables('scriptName'), '.sh')]"
+    "scriptName1": "install-rancher",
+    "scriptNameSh1": "[concat(variables('scriptName1'), '.sh')]"
+    "scriptName2": "install-rancher",
+    "scriptNameSh2": "[concat(variables('scriptName2'), '.sh')]"
   },
   "resources": [
     {
@@ -93,7 +96,7 @@
               "backendAddressPool": {
                 "id": "[resourceId('Microsoft.Network/loadBalancers/backendAddressPools', variables('lbName'), variables('lbBackendPoolName'))]"
               },
-              "frontendPort": 80,
+              "frontendPort": 443,
               "backendPort": 80,
               "enableFloatingIP": false,
               "idleTimeoutInMinutes": 4,
@@ -147,7 +150,7 @@
             "description": "description",
             "protocol": "Tcp",
             "sourcePortRange": "*",
-            "destinationPortRanges": ["22", "80", "443", "8080", "6433"],
+            "destinationPortRanges": ["22", "80", "443", "8080", "6443"],
             "sourceAddressPrefix": "*",
             "destinationAddressPrefix": "*",
             "access": "Allow",
@@ -285,7 +288,7 @@
     },
     {
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(parameters('projectName'),'-vm',copyIndex(1), '/', variables('scriptName'))]",
+      "name": "[concat(parameters('projectName'),'-vm',copyIndex(1), '/', variables('scriptName1'))]",
       "apiVersion": "2020-06-01",
       "location": "[parameters('location')]",
       "copy": {
@@ -302,9 +305,30 @@
       "autoUpgradeMinorVersion": true,
       "settings": {
           "fileUris": [
-                "[uri(variables('_artifactsLocation'), concat(variables('scriptNameSh'), variables('_artifactsLocationSasToken')))]"
+                "[uri(variables('_artifactsLocation'), concat(variables('scriptNameSh1'), variables('_artifactsLocationSasToken')))]"
           ],
-      "commandToExecute": "[concat('sh ', variables('scriptNameSh'))]"
+      "commandToExecute": "[concat('bash ', variables('scriptNameSh1'))]"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(parameters('projectName'),'-vm1', '/', variables('scriptName2'))]",
+      "apiVersion": "2020-06-01",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+          "extensionCopy"
+      ],
+      "properties": {
+      "publisher": "Microsoft.Azure.Extensions",
+      "type": "CustomScript",
+      "typeHandlerVersion": "2.0",
+      "autoUpgradeMinorVersion": true,
+      "settings": {
+          "fileUris": [
+               "[uri(variables('_artifactsLocation'), concat(variables('scriptNameSh2'), variables('_artifactsLocationSasToken')))]"
+          ],
+      "commandToExecute": "[concat('bash', variables('scriptNameSh2'), ' ', resourceGroup().name )]"
         }
       }
     }
