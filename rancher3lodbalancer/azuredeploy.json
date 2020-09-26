@@ -305,7 +305,7 @@
           "fileUris": [
                 "[uri(variables('_artifactsLocation'), concat(variables('scriptNameSh1'), variables('_artifactsLocationSasToken')))]"
           ],
-      "commandToExecute": "[concat('bash ', variables('scriptNameSh1'))]"
+      "commandToExecute": "[concat('bash ', variables('scriptNameSh1'), ' ', 'resourceGroup().name')]"
         }
       }
     }
