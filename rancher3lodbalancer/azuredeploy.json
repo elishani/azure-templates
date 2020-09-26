@@ -54,9 +54,7 @@
     "_artifactsLocation": "https://raw.githubusercontent.com/elishani/azure-templates/master/scripts/",
     "_artifactsLocationSasToken": "",
     "scriptName1": "install-rancher",
-    "scriptNameSh1": "[concat(variables('scriptName1'), '.sh')]",
-    "scriptName2": "install-rancher2",
-    "scriptNameSh2": "[concat(variables('scriptName2'), '.sh')]"
+    "scriptNameSh1": "[concat(variables('scriptName1'), '.sh')]"
   },
   "resources": [
     {
@@ -308,27 +306,6 @@
                 "[uri(variables('_artifactsLocation'), concat(variables('scriptNameSh1'), variables('_artifactsLocationSasToken')))]"
           ],
       "commandToExecute": "[concat('bash ', variables('scriptNameSh1'))]"
-        }
-      }
-    },
-    {
-      "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(parameters('projectName'),'-vm1', '/', variables('scriptName2'))]",
-      "apiVersion": "2020-06-01",
-      "location": "[parameters('location')]",
-      "dependsOn": [
-          "extensionCopy"
-      ],
-      "properties": {
-      "publisher": "Microsoft.Azure.Extensions",
-      "type": "CustomScript",
-      "typeHandlerVersion": "2.0",
-      "autoUpgradeMinorVersion": true,
-      "settings": {
-          "fileUris": [
-               "[uri(variables('_artifactsLocation'), concat(variables('scriptNameSh2'), variables('_artifactsLocationSasToken')))]"
-          ],
-      "commandToExecute": "[concat('bash', variables('scriptNameSh2'), ' ', resourceGroup().name )]"
         }
       }
     }
