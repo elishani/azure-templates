@@ -1,17 +1,22 @@
-#!/bin/bash
-apt update
+resource_group_name=$1
+export file_name=cluster.yml
 
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable"
-apt -y install \
-    docker-compose \
-    curl \
-    apt-transport-https \
-    ca-certificates \
-    software-properties-common \
-    docker-ce \
-    wget \
-    docker-compose
-sed -i 's/ClientAliveInterval 120/ClientAliveInterval 180/g' /etc/ssh/sshd_config
+az network public-ip list --resource-group $resource_group_name | grep '"ipAddress":' |  awk -F'"' '{print $4}' > iplist.txt
 
-mkdir -p /var/www/rancher
+sed -e "1d" iplist.txt > vm.txt
+
+echo "nodes:" > $file_name
+i=1
+for public in `cat vm.txt` ; do
+    vm=rancher$i
+    private=`ssh -o "StrictHostKeyChecking no" vm@$public /sbin/ip addr | grep 'inet 10.0' | awk '{print $2}' | cut -d'/' -f1`
+    host_name=`ssh vm@$public hostname`
+    cat >> $file_name <<EOF
+  - address: $public
+    internal_address: $private
+    user: vm
+    role: [controlplane, worker, etcd]
+    hostname_override: $host_name
+EOF
+    i=$((++i))
+done

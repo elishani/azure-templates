@@ -54,8 +54,8 @@
     "_artifactsLocation": "https://raw.githubusercontent.com/elishani/azure-templates/master/scripts/",
     "_artifactsLocationSasToken": "",
     "scriptName1": "install-rancher",
-    "scriptNameSh1": "[concat(variables('scriptName1'), '.sh')]"
-    "scriptName2": "install-rancher",
+    "scriptNameSh1": "[concat(variables('scriptName1'), '.sh')]",
+    "scriptName2": "install-rancher1",
     "scriptNameSh2": "[concat(variables('scriptName2'), '.sh')]"
   },
   "resources": [
