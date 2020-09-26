@@ -55,7 +55,7 @@
     "_artifactsLocationSasToken": "",
     "scriptName1": "install-rancher",
     "scriptNameSh1": "[concat(variables('scriptName1'), '.sh')]",
-    "scriptName2": "install-rancher1",
+    "scriptName2": "install-rancher2",
     "scriptNameSh2": "[concat(variables('scriptName2'), '.sh')]"
   },
   "resources": [
