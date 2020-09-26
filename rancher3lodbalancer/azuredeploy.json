@@ -46,7 +46,7 @@
     "lbProbeName": "loadBalancerHealthProbe",
     "nsgName": "[concat(parameters('projectName'),'-nsg')]",
     "vNetName": "[concat(parameters('projectName'),'-vnet')]",
-    "vNetAddressPrefix": "10.0.1.0/24",
+    "vNetAddressPrefix": "10.0.1.0/16",
     "vNetSubnetName": "BackendSubnet",
     "vNetSubnetAddressPrefix": "10.0.1.0/24",
     "vmStorageAccountType": "Standard_LRS",
@@ -305,7 +305,7 @@
           "fileUris": [
                 "[uri(variables('_artifactsLocation'), concat(variables('scriptNameSh1'), variables('_artifactsLocationSasToken')))]"
           ],
-      "commandToExecute": "[concat('bash ', variables('scriptNameSh1'), ' ', 'resourceGroup().name')]"
+      "commandToExecute": "[concat('bash ', variables('scriptNameSh1'), ' ', parameters('numberOfVMs'), ' ', variables(vNetSubnetAddressPrefix))]"
         }
       }
     }
