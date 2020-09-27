@@ -57,7 +57,18 @@
     "_artifactsLocation": "https://raw.githubusercontent.com/elishani/azure-templates/master/scripts/",
     "_artifactsLocationSasToken": "",
     "scriptName1": "install-rancher",
-    "scriptNameSh1": "[concat(variables('scriptName1'), '.sh')]"
+    "scriptNameSh1": "[concat(variables('scriptName1'), '.sh')]",
+    "linuxConfiguration": {
+        "disablePasswordAuthentication": true,
+          "ssh": {
+            "publicKeys": [
+             {
+              "path": "[concat('/home/', parameters('adminUsername'), '/.ssh/authorized_keys')]",
+              "keyData": "[parameters('adminPasswordOrKey')]"
+            }
+          ]
+        }
+    }
   },
   "resources": [
     {

@@ -56,7 +56,7 @@
         "scriptNameSh1": "[concat(variables('scriptName1'), '.sh')]", 
         "scriptNameSh2": "[concat(variables('scriptName2'), '.sh')]",
         "linuxConfiguration": {
-          "disablePasswordAuthentication": true,
+        "disablePasswordAuthentication": true,
           "ssh": {
             "publicKeys": [
              {
