@@ -34,7 +34,11 @@ if [ ! -z "$6" ];then
   ipv[2]=$7
 fi
 
+echo "Public ip"
 echo "${ips[@]}"
+
+echo "Private ip"
+echo "${ipv[@]}"
 
 file_name=cluster.yml
 
@@ -43,13 +47,14 @@ for public_ip in "${ips[@]}"
 do
   echo $public_ip
   private_ip=${ipv[$i]}
-  hostname=`ssh -o "StrictHostKeyChecking no" vm@$public_ip hostname`
+  hostname=
   cat >> $file_name <<EOF
   - address: $public_ip
     internal_address: $private_ip
     user: vm
     role: [controlplane, worker, etcd]
     hostname_override: $hostname
+    i=$((++i))
 EOF
 done
 
