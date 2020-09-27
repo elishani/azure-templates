@@ -61,6 +61,12 @@
     "ip1": "[concat(parameters('projectName'),'-vm1-publicIp')]",
     "ip2": "[concat(parameters('projectName'),'-vm2-publicIp')]",
     "ip3": "[concat(parameters('projectName'),'-vm3-publicIp')]",
+    "vm1": "[concat(parameters('projectName'),'-vm1')]",
+    "vm2": "[concat(parameters('projectName'),'-vm2')]",
+    "vm3": "[concat(parameters('projectName'),'-vm3')]",
+    "nic1": "[concat(parameters('projectName'),'-vm1-networkInterface')]",
+    "nic2": "[concat(parameters('projectName'),'-vm2-networkInterface')]",
+    "nic3": "[concat(parameters('projectName'),'-vm3-networkInterface')]",
     "vNetSubnetName": "BackendSubnet",
     "vNetSubnetAddressPrefix": "10.0.1.0/24",
     "vmStorageAccountType": "Standard_LRS",
@@ -331,7 +337,7 @@
           "fileUris": [
                 "[uri(variables('_artifactsLocation'), concat(variables('scriptNameSh1'), variables('_artifactsLocationSasToken')))]"
           ],
-      "commandToExecute": "[concat('bash ', variables('scriptNameSh1'), ' ',parameters('numberOfVMs'),' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('ip1'))).IpAddress,' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('ip2'))).IpAddress,' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('ip3'))).IpAddress,' ',resourceId('Microsoft.Network/networkInterfaces',concat(parameters('projectName'),'-vm', copyIndex(1), '-networkInterface')))]"
+      "commandToExecute": "[concat('bash ', variables('scriptNameSh1'), ' ',parameters('numberOfVMs'),' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('ip1'))).IpAddress,' ',reference(variables('nic1')).ipConfigurations[0].properties.privateIPAddress,' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('ip2'))).IpAddress,' ',reference(variables('nic2')).ipConfigurations[0].properties.privateIPAddress,' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('ip3'))).IpAddress,' ',reference(variables('nic3')).ipConfigurations[0].properties.privateIPAddress)]"
         }
       }
     }

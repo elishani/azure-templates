@@ -21,23 +21,31 @@ su -c 'echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC2BMyRL1pvYi4JmAvsgimRQWouTeh
 
 count=$1
 ips=()
+ipv()
 ips[0]=$2
-[ ! -z "$3" ]&& ips[1]=$3
-[ ! -z "$4" ]&& ips[2]=$4
-private=$5
-echo "$private"
+ipv[0]=$3
+private_ip1=$3
+if [ ! -z "$4" ];then
+  ips[1]=$4
+  ipv[1]=$5
+fi
+if [ ! -z "$6" ];then
+  ips[2]=$6
+  ipv[2]=$7
+fi
 
 echo "${ips[@]}"
 
 file_name=cluster.yml
 
+1=1
 for public_ip in "${ips[@]}"
 do
   echo $public_ip
-  private_ip=`ssh -o "StrictHostKeyChecking no" vm@$public_ip /sbin/ip addr | grep 'inet 10.0' | awk '{print $2}' | cut -d'/' -f1`
+  private_ip=${ipv[$i]}
   hostname=`ssh -o "StrictHostKeyChecking no" vm@$public_ip hostname`
   cat >> $file_name <<EOF
-   - address: $public_ip
+  - address: $public_ip
     internal_address: $private_ip
     user: vm
     role: [controlplane, worker, etcd]
