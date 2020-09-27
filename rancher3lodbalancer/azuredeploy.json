@@ -48,6 +48,8 @@
     "vNetName": "[concat(parameters('projectName'),'-vnet')]",
     "vNetAddressPrefix": "10.0.0.0/16",
     "ip1": "[concat(parameters('projectName'),'-vm1-publicIp')]",
+    "ip2": "[concat(parameters('projectName'),'-vm2-publicIp')]",
+    "ip3": "[concat(parameters('projectName'),'-vm3-publicIp')]",
     "vNetSubnetName": "BackendSubnet",
     "vNetSubnetAddressPrefix": "10.0.1.0/24",
     "vmStorageAccountType": "Standard_LRS",
@@ -306,7 +308,7 @@
           "fileUris": [
                 "[uri(variables('_artifactsLocation'), concat(variables('scriptNameSh1'), variables('_artifactsLocationSasToken')))]"
           ],
-      "commandToExecute": "[concat('bash ', variables('scriptNameSh1'), ' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('ip1'))).IpAddress,' ', parameters('numberOfVMs'), ' ',variables('vNetSubnetAddressPrefix'))]"
+      "commandToExecute": "[concat('bash ', variables('scriptNameSh1'), ' ',parameters('numberOfVMs'),' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('ip1'))).IpAddress,' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('ip2'))).IpAddress,' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('ip3'))).IpAddress,' ')]"
         }
       }
     }

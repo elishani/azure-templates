@@ -20,39 +20,50 @@ su -c 'echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC2BMyRL1pvYi4JmAvsgimRQWouTeh
 [ -z $(hostname  | grep 'vm1$') ] && exit
 
 count=$1
-echo "'$count'"
+echo "Number of VM: '$count'"
+publicIp1=$2
+publicIp2=$3
+publicIp3=$5
+ip_array=($publicIp1 $publicIp2 $publicIp3)
+echo ${ip_array[*]}
 
-myIp=`ip addr  show eth0 | grep 'inet ' | awk '{print $2}' | cut -d'/' -f1`
-ip_pre=`echo $myIp | cut -d'.' -f1-3`
-i=3
-vm_list_ip=""
-
-while true; do
-	i=`expr $i + 1`
-	ip="$ip_pre.$i"
-	ping -c1 $ip
-	if [ $? = 0  ]; then
-		vm_list_ip="$vm_list_ip $ip"
-		count=`expr $count - 1`	
-		[ $count = 0 ] && break
-	fi
-	[ $i = 10 ] && break
-done
-
-[ $count -ne 0 ]&& exit 1
-echo $vm_list_ip
-
-file_name=cluster.yml
-echo "nodes:" > $file_name
-i=1
-for private in $vm_list_ip ; do
-	cat >> $file_name <<EOF
-   - address: $public
-    internal_address: $private
-    user: vm
-    role: [controlplane, worker, etcd]
-    hostname_override: linnovate-vm$i
-EOF
-	i=$((++i))
-done
-cat $file_name
+private1=`ssh -o "StrictHostKeyChecking no" vm@$publicIp1 /sbin/ip addr | grep 'inet 10.0' | awk '{print $2}' | cut -d'/' -f1`
+private2=`ssh -o "StrictHostKeyChecking no" vm@$publicIp2 /sbin/ip addr | grep 'inet 10.0' | awk '{print $2}' | cut -d'/' -f1`
+private3=`ssh -o "StrictHostKeyChecking no" vm@$publicIp3 /sbin/ip addr | grep 'inet 10.0' | awk '{print $2}' | cut -d'/' -f1`
+#
+#myIp=`ip addr  show eth0 | grep 'inet ' | awk '{print $2}' | cut -d'/' -f1`
+#ip_pre=`echo $myIp | cut -d'.' -f1-3`
+#i=3
+#vm_list_ip=""
+#
+#while true; do
+#	i=`expr $i + 1`
+#	ip="$ip_pre.$i"
+#	ping -c1 $ip
+#	if [ $? = 0  ]; then
+#		vm_list_ip="$vm_list_ip $ip"
+#		count=`expr $count - 1`	
+#		[ $count = 0 ] && break
+#	fi
+#	[ $i = 3 ] && break
+#done
+#
+#[ $count -ne 0 ]&& exit 1
+#echo $vm_list_ip
+#
+#file_name=cluster.yml
+#echo "nodes:" > $file_name
+#i=1
+#for private in $vm_list_ip ; do
+#  public
+#	cat >> $file_name <<EOF
+#   - address: $public
+#    internal_address: $private
+#    user: vm
+#    role: [controlplane, worker, etcd]
+#    hostname_override: linnovate-vm$i
+#EOF
+#	i=$((++i))
+#done
+#cat $file_name
+#
