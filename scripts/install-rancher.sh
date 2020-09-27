@@ -22,16 +22,20 @@ su -c 'echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC2BMyRL1pvYi4JmAvsgimRQWouTeh
 count=$1
 ips=()
 ipv=()
+host=()
 ips[0]=$2
 ipv[0]=$3
 private_ip1=$3
-if [ ! -z "$4" ];then
-  ips[1]=$4
-  ipv[1]=$5
+host1=$4
+if [ ! -z "$5" ];then
+  ips[1]=$5
+  ipv[1]=$6
+  hosts[1]=$7
 fi
-if [ ! -z "$6" ];then
-  ips[2]=$6
-  ipv[2]=$7
+if [ ! -z "$8" ];then
+  ips[2]=$8
+  ipv[2]=$9
+  hosts[2]=$10
 fi
 
 echo "Public ip"
@@ -40,14 +44,16 @@ echo "${ips[@]}"
 echo "Private ip"
 echo "${ipv[@]}"
 
+echo "Hosts List"
+echo "${host[@]}"
+
 file_name=cluster.yml
 
 i=0
 for public_ip in "${ips[@]}"
 do
-  echo $public_ip
   private_ip=${ipv[$i]}
-  hostname=
+  hostname=${host[$i]}
   cat >> $file_name <<EOF
   - address: $public_ip
     internal_address: $private_ip
@@ -57,43 +63,3 @@ do
     i=$((++i))
 EOF
 done
-
-exit
-
-#
-#myIp=`ip addr  show eth0 | grep 'inet ' | awk '{print $2}' | cut -d'/' -f1`
-#ip_pre=`echo $myIp | cut -d'.' -f1-3`
-#i=3
-#vm_list_ip=""
-#
-#while true; do
-#	i=`expr $i + 1`
-#	ip="$ip_pre.$i"
-#	ping -c1 $ip
-#	if [ $? = 0  ]; then
-#		vm_list_ip="$vm_list_ip $ip"
-#		count=`expr $count - 1`	
-#		[ $count = 0 ] && break
-#	fi
-#	[ $i = 3 ] && break
-#done
-#
-#[ $count -ne 0 ]&& exit 1
-#echo $vm_list_ip
-#
-#file_name=cluster.yml
-#echo "nodes:" > $file_name
-#i=1
-#for private in $vm_list_ip ; do
-#  public
-#	cat >> $file_name <<EOF
-#   - address: $public
-#    internal_address: $private
-#    user: vm
-#    role: [controlplane, worker, etcd]
-#    hostname_override: linnovate-vm$i
-#EOF
-#	i=$((++i))
-#done
-#cat $file_name
-#
