@@ -20,26 +20,25 @@ su -c 'echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC2BMyRL1pvYi4JmAvsgimRQWouTeh
 [ -z $(hostname  | grep 'vm1$') ] && exit
 
 count=$1
-ips=()
+ipp=()
 ipv=()
 host=()
-ips[0]=$2
+ipp[0]=$2
 ipv[0]=$3
-private_ip1=$3
-host1=$4
+host[0]=$4
 if [ ! -z "$5" ];then
-  ips[1]=$5
+  ipp[1]=$5
   ipv[1]=$6
-  hosts[1]=$7
+  host[1]=$7
 fi
 if [ ! -z "$8" ];then
-  ips[2]=$8
+  ipp[2]=$8
   ipv[2]=$9
-  hosts[2]=$10
+  host[2]=$10
 fi
 
 echo "Public ip"
-echo "${ips[@]}"
+echo "${ipp[@]}"
 
 echo "Private ip"
 echo "${ipv[@]}"
@@ -50,7 +49,7 @@ echo "${host[@]}"
 file_name=cluster.yml
 
 i=0
-for public_ip in "${ips[@]}"
+for public_ip in "${ipp[@]}"
 do
   private_ip=${ipv[$i]}
   hostname=${host[$i]}
@@ -60,6 +59,6 @@ do
     user: vm
     role: [controlplane, worker, etcd]
     hostname_override: $hostname
-    i=$((++i))
 EOF
+  i=$((++i))
 done
