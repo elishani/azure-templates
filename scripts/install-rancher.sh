@@ -21,7 +21,7 @@ su -c 'echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC2BMyRL1pvYi4JmAvsgimRQWouTeh
 
 count=$1
 ips=()
-ipv()
+ipv=()
 ips[0]=$2
 ipv[0]=$3
 private_ip1=$3
@@ -38,7 +38,7 @@ echo "${ips[@]}"
 
 file_name=cluster.yml
 
-1=1
+i=0
 for public_ip in "${ips[@]}"
 do
   echo $public_ip
