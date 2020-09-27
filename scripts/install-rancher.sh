@@ -66,4 +66,4 @@ EOF
 done
 
 cp $file_name $home
-chwon 1000:1000 $home/$filename
+chown 1000:1000 $home/$filename
