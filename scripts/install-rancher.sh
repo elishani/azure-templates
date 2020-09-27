@@ -24,6 +24,8 @@ ips=()
 ips[0]=$2
 [ ! -z "$3" ]&& ips[1]=$3
 [ ! -z "$4" ]&& ips[2]=$4
+private=$5
+echo "$private"
 
 echo "${ips[@]}"
 
