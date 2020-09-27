@@ -20,21 +20,22 @@ su -c 'echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC2BMyRL1pvYi4JmAvsgimRQWouTeh
 [ -z $(hostname  | grep 'vm1$') ] && exit
 
 count=$1
+shift
 ipp=()
 ipv=()
 host=()
-ipp[0]=$2
-ipv[0]=$3
-host[0]=$4
-if [ ! -z "$5" ];then
-  ipp[1]=$5
-  ipv[1]=$6
-  host[1]=$7
+ipp[0]=$1
+ipv[0]=$2
+host[0]=$3
+if [ ! -z "$4" ];then
+  ipp[1]=$4
+  ipv[1]=$5
+  host[1]=$6
 fi
-if [ ! -z "$8" ];then
-  ipp[2]=$8
-  ipv[2]=$9
-  host[2]=$10
+if [ ! -z "$7" ];then
+  ipp[2]=$7
+  ipv[2]=$8
+  host[2]=$9
 fi
 
 echo "Public ip"
