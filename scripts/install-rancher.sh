@@ -20,6 +20,8 @@ usermod -aG docker $user
 #chmod 600 $home/.ssh
 ssh_rsa="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDBAcK82Xtg0pMnLacGyHnZFQbnER7HSPMS7++hT3Z4DJVsApCN/1QHkzwHFSe/VqOYJtRx9pN3Por3PjeOU/skb76p0AEsfj+qfA1rdlcVkh9AmNpVYk2KpSUfN4B5dnHSjRBeHNmuvYTbpid9NHPdt/JM9srlFXk66p9ljg19iAca7uEbAn6y9j46xYUCWzJI6Deai+x/ecpdpH3FiJ6AQhrE1jiOT8bMm9lcpjeaEZbGPGmHQYBt7Z9quSa57JL+NUgURY9PitbsdRxqqvxDbjSdxXzFu9UUOzet7aqcEEyDOADTtj8Ot/v5WpvZchGQSfAt1NCCeuvk6h3ISuhx"
 echo "$ssh_rsa" > $home/.ssh/authorized_keys
+#chown -R $owner $home/.ssh
+#chmod -R 600 $home/.ssh
 
 # Run on one machine
 
@@ -114,8 +116,8 @@ vyUrmcLZg9/ztlJGgOg9bXijO5PlR7X2PE0FjHk7CQq/+QKkaDBpJiY0LfW2zV3P
 x8bswqHNdQF5Jy+Bt4QCfrVFaxnqsZgY2z3Dr7dtFo3aKy5N1zcs
 -----END RSA PRIVATE KEY-----
 " > $home/.ssh/id_rsa
-chown -R $owner $home/.ssh
-chmod -R 600 $home/.ssh
+#chown -R $owner $home/.ssh
+#chmod -R 600 $home/.ssh
 cd $home
 rke up
 
