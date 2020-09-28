@@ -9,6 +9,9 @@ add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(
 apt update
 apt install -y docker-ce docker-ce-cli containerd.io
 
+apt update
+apt install -y kubelet kubeadm kubectl
+
 user=$1
 shift
 echo "user='$user'"
