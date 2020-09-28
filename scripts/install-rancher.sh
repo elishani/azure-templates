@@ -119,11 +119,11 @@ x8bswqHNdQF5Jy+Bt4QCfrVFaxnqsZgY2z3Dr7dtFo3aKy5N1zcs
 chown -R $owner $home/.ssh
 chmod -R 600 $home/.ssh/*
 
-ssh $user@ipp[0] ls
+ssh -o "StrictHostKeyChecking no" $user@ipp[0] ls
 [ $? != 0 ] && exit 1
-ssh $user@ipp[1] ls
+ssh -o "StrictHostKeyChecking no" $user@ipp[1] ls
 [ $? != 0 ] && exit 1
-ssh $user@ipp[2] ls
+ssh -o "StrictHostKeyChecking no" $user@ipp[2] ls
 [ $? != 0 ] && exit 1
 
 cd $home
