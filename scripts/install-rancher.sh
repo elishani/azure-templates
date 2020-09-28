@@ -13,10 +13,12 @@ user=$1
 shift
 echo "user='$user'"
 home=$(grep "^$user:" /etc/passwd | awk -F: '{print $6}')
+owner=$(grep "^$user:" /etc/passwd | grep "^$user:" /etc/passwd | awk -F: '{print $3,":",$4}' | sed 's/ //g')
 usermod -aG docker $user
-su -c 'mkdir $HOME/.ssh' - $user
-su -c 'chmod 700 $HOME/.ssh' - $user
-su -c 'echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDBAcK82Xtg0pMnLacGyHnZFQbnER7HSPMS7++hT3Z4DJVsApCN/1QHkzwHFSe/VqOYJtRx9pN3Por3PjeOU/skb76p0AEsfj+qfA1rdlcVkh9AmNpVYk2KpSUfN4B5dnHSjRBeHNmuvYTbpid9NHPdt/JM9srlFXk66p9ljg19iAca7uEbAn6y9j46xYUCWzJI6Deai+x/ecpdpH3FiJ6AQhrE1jiOT8bMm9lcpjeaEZbGPGmHQYBt7Z9quSa57JL+NUgURY9PitbsdRxqqvxDbjSdxXzFu9UUOzet7aqcEEyDOADTtj8Ot/v5WpvZchGQSfAt1NCCeuvk6h3ISuhx" >$HOME/.ssh/authorized_keys' - $user
+mkdir $home/.ssh
+chown -R $owner $home/.ssh
+chmod 700 $home/.ssh
+echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDBAcK82Xtg0pMnLacGyHnZFQbnER7HSPMS7++hT3Z4DJVsApCN/1QHkzwHFSe/VqOYJtRx9pN3Por3PjeOU/skb76p0AEsfj+qfA1rdlcVkh9AmNpVYk2KpSUfN4B5dnHSjRBeHNmuvYTbpid9NHPdt/JM9srlFXk66p9ljg19iAca7uEbAn6y9j46xYUCWzJI6Deai+x/ecpdpH3FiJ6AQhrE1jiOT8bMm9lcpjeaEZbGPGmHQYBt7Z9quSa57JL+NUgURY9PitbsdRxqqvxDbjSdxXzFu9UUOzet7aqcEEyDOADTtj8Ot/v5WpvZchGQSfAt1NCCeuvk6h3ISuhx" >$home/.ssh/authorized_keys
 
 # Run on one machine
 
@@ -75,7 +77,7 @@ EOF
 done
 
 cp $file_name $home
-chown 1000:1000 $home/$filename
+chown $owner $home/$filename
 
 cd /usr/local/bin
 wget https://github.com/rancher/rke/releases/download/v1.2.0-rc15/rke_linux-amd64
@@ -109,7 +111,8 @@ pZ6tnQKBgC4/kqwrLlvdeG3+B8cbIQcCU4IX9nNWUcf8Urhbq9wExFTGPruVmcVT
 vyUrmcLZg9/ztlJGgOg9bXijO5PlR7X2PE0FjHk7CQq/+QKkaDBpJiY0LfW2zV3P
 x8bswqHNdQF5Jy+Bt4QCfrVFaxnqsZgY2z3Dr7dtFo3aKy5N1zcs
 -----END RSA PRIVATE KEY-----
-" > $user/.ssh/id_rsa
+" > $home/.ssh/id_rsa
+chown $owner $home/.ssh/id_rsa
 cd $home
 rke up
 
