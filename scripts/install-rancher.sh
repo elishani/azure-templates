@@ -16,7 +16,7 @@ home=$(grep "^$user:" /etc/passwd | awk -F: '{print $6}')
 usermod -aG docker $user
 su -c 'mkdir $HOME/.ssh' - $user
 su -c 'chmod 700 $HOME/.ssh' - $user
-su -c 'echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC2BMyRL1pvYi4JmAvsgimRQWouTehJw+dyw+LT4fGF9NQ4nVYreXDPhrjlIn7SF3RW9ynGT3unyoAj+ul0MGJYbFGGI8yPv/6f3mjego7BZQCf6OOVBQf8LDWy78KEKG7Yz5uwmrAaqszC+2C91bzG8MMEBmTm/XtUPNpwzCksaK0S7ZXQmaFThEAWGkV7vMmahBklOVUlFP0tUpxdP3SObBFFUNDgh37kP6SxrXpaLXUluGWtNoZvWsYzPkEqyZES8gJAmVg0ocqQfDnaxwiar8PQH/9prr5xDcjeFYmhTTO5hDHg5Zc9d359ZuYK4gAQ2VByongEFi1oxoJifUsJU1fFe56cd6YYn0G+8b49k+D1R5YK/n4JvoxciYOqTPGDmbDHBYKCwSlDNWh9uID/6PLrUE6NP6N/5YRJe5wawMZido+cmxRQQNjq7B5+YgQe5kSD49V1ruHWo8i18QCPDSjYFXdBTvwaQ/2AQSuBerGWkvVCtr/OJI47jj1x+50=" >$HOME/.ssh/authorized_keys' - $user
+su -c 'echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDBAcK82Xtg0pMnLacGyHnZFQbnER7HSPMS7++hT3Z4DJVsApCN/1QHkzwHFSe/VqOYJtRx9pN3Por3PjeOU/skb76p0AEsfj+qfA1rdlcVkh9AmNpVYk2KpSUfN4B5dnHSjRBeHNmuvYTbpid9NHPdt/JM9srlFXk66p9ljg19iAca7uEbAn6y9j46xYUCWzJI6Deai+x/ecpdpH3FiJ6AQhrE1jiOT8bMm9lcpjeaEZbGPGmHQYBt7Z9quSa57JL+NUgURY9PitbsdRxqqvxDbjSdxXzFu9UUOzet7aqcEEyDOADTtj8Ot/v5WpvZchGQSfAt1NCCeuvk6h3ISuhx" >$HOME/.ssh/authorized_keys' - $user
 
 # Run on one machine
 
@@ -77,8 +77,42 @@ done
 cp $file_name $home
 chown 1000:1000 $home/$filename
 
+cd /usr/local/bin
+wget https://github.com/rancher/rke/releases/download/v1.2.0-rc15/rke_linux-amd64
+mv rke_linux-amd64 rke
+chmod +x rke
+rke --version
+echo "-----BEGIN RSA PRIVATE KEY-----
+MIIEowIBAAKCAQEAwQHCvNl7YNKTJy2nBsh52RUG5xEex0jzEu/voU92eAyVbAKQ
+jf9UB5M8BxUnv1ajmCbUcfaTdz6K9z43jlP7JG++qdABLH4/qnwNa3ZXFZIfQJja
+VWJNiqUlHzeAeXZx0o0QXhzZrr2E26YnfTRz3bfyTPbK5RV5OuqfZY4NfYgHGu7h
+GwJ+svY+OsWFAlsySOg3movsf3nKXaR9xYiegEIaxNY4jk/GzJvZXKY3mhGWxjxp
+h0GAbe2farkmueyS/jVIFEWPT4rW7HUcaqr8Q240ncV8xbvVFDs3re2qnBBMgzgA
+07Y/Drf7+Vqb2XIRkEnwLdTQgnrr5OodyErocQIDAQABAoIBABdTDyWjYrWgvQfP
+DJBVSeRiFiN2fjG3LyjqthrYb4iyfJxA8xc19AG2WVrBw7vrzHlmt+XN1qRieojG
+jBA3NfKBTplW+c1WtHr14ulJs9x3fC9iSYBoENbgfkv3eR80oSzAv2mgMu5bGOMy
+gTMwU5BH2pBSgtKMdcoY8IplUFwLDo9zAxob07xs4x1VRvfPbJViNdHnbQjvuDmL
+A6EMX4ZV0Uo6G6F/JZD6gX8taBxaAbXnBy/9tndZqjz1ADbqRRMMNJq9BcDtREVl
+75ZvEOicuemyntX1OP+AChEziZFDm/H0l3N/3hwqszmnCclk+J06mLM6CuSPIWYK
+/g8DrcECgYEA5cUDALWMEVkh2WWiw64psyk+iFJjB9t2BB1OBL6umbCN8XS67lmN
+0I6n8rB+XlLglzvSW6Q9tXjevSHtaeQDB66gwMmzh/GKEiNas74qJtBFeAmFS2ac
+PP/5TWsMjEdLrjM6AHaoqeIBOh0A3DQSe9EAvfDeXdait0o8PXHmQV8CgYEA1wpd
+DgAhrj9vCwgQg+EsszPfG8FEVmggstEKijiAAywa1QMyX41c4pXenfSYW0o52k6o
+NXtsDYI95SxgQeF35WKslpT9lafcZg6XZz1a18mabsuzPw7Uo03jewd7Z51DampZ
+wQHLVSxt2w+8atDbH8LNZor3iwYGjvEp3W2cGC8CgYEAqustu6ZRBkqmemA3fpac
+4HBq2t9mWV7wYEkoUzFBEoSaYiXyNAGcE6s61bZimmnONdHDPnZjjQ3XqxuEzwNV
+Ga7WV/LywMp1ad6wxwpLssm1E4EJjbhLurizS9q439TdQD1NBTE/b/f177PJgwSd
+R0uG4MQ/tdBHBE+NliuXG8MCgYAxCnoCUWFc/bZzS5mImfe5vqCpEcBl/EVIwoem
+0g/PqWVNIvd/9xsxyYAFgdylJR5gfQO7frQ7uHIpK5+gJq1TMNevV7clRCztUXKR
+5toq0B1aGzZ7sQQpYf/49NHd5W2UfUCO1bvrZsB+7u3HZm4yphh1xEeD+xHP04v6
+pZ6tnQKBgC4/kqwrLlvdeG3+B8cbIQcCU4IX9nNWUcf8Urhbq9wExFTGPruVmcVT
+vyUrmcLZg9/ztlJGgOg9bXijO5PlR7X2PE0FjHk7CQq/+QKkaDBpJiY0LfW2zV3P
+x8bswqHNdQF5Jy+Bt4QCfrVFaxnqsZgY2z3Dr7dtFo3aKy5N1zcs
+-----END RSA PRIVATE KEY-----
+" > $user/.ssh/id_rsa
 cd $home
 rke up
+
 cp kube_config_cluster.yml .kube/config
 export KUBECONFIG=./kube_config_cluster.yml
 kubectl get nodes

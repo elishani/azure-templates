@@ -62,8 +62,8 @@
     "ip1": "[concat(parameters('projectName'),'-vm1-publicIp')]",
     "ip2": "[concat(parameters('projectName'),'-vm2-publicIp')]",
     "ip3": "[concat(parameters('projectName'),'-vm3-publicIp')]",
-    "vm1": "[concat(parameters('projectName'),'-vm0')]",
-    "vm0": "[concat(parameters('projectName'),'-vm1')]",
+    "vm0": "[concat(parameters('projectName'),'-vm0')]",
+    "vm1": "[concat(parameters('projectName'),'-vm1')]",
     "vm2": "[concat(parameters('projectName'),'-vm2')]",
     "vm3": "[concat(parameters('projectName'),'-vm3')]",
     "nic0": "[concat(parameters('projectName'),'-vm0-networkInterface')]",
@@ -219,9 +219,6 @@
       "apiVersion": "2019-12-01",
       "name": "[concat(parameters('projectName'),'-vm', copyIndex())]",
       "location": "[parameters('location')]",
-      "zones": [
-        "[copyIndex()]"
-      ],
       "copy": {
         "name": "vmCopy",
         "count": "[parameters('numberOfVMs')]"
@@ -340,7 +337,7 @@
           "fileUris": [
                 "[uri(variables('_artifactsLocation'), concat(variables('scriptNameSh1'), variables('_artifactsLocationSasToken')))]"
           ],
-      "commandToExecute": "[concat('bash ', variables('scriptNameSh1'), ' ',parameters('numberOfVMs'),' ',parameters('adminUsername'),' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('ip1'))).IpAddress,' ',reference(variables('nic1')).ipConfigurations[0].properties.privateIPAddress,' ',variables('vm1'),' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('ip0'))).IpAddress,' ',reference(variables('nic0')).ipConfigurations[0].properties.privateIPAddress,' ',variables('vm0'),' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('ip2'))).IpAddress,' ',reference(variables('nic2')).ipConfigurations[0].properties.privateIPAddress,' ',variables('vm2'),' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('ip3'))).IpAddress,' ',reference(variables('nic3')).ipConfigurations[0].properties.privateIPAddress,' ',variables('vm3'))]"
+      "commandToExecute": "[concat('bash ', variables('scriptNameSh1'), ' ',parameters('adminUsername'),' ',parameters('numberOfVMs'),' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('ip0'))).IpAddress,' ',reference(variables('nic0')).ipConfigurations[0].properties.privateIPAddress,' ',variables('vm0'),' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('ip1'))).IpAddress,' ',reference(variables('nic1')).ipConfigurations[0].properties.privateIPAddress,' ',variables('vm1'),' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('ip2'))).IpAddress,' ',reference(variables('nic2')).ipConfigurations[0].properties.privateIPAddress,' ',variables('vm2'),' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('ip3'))).IpAddress,' ',reference(variables('nic3')).ipConfigurations[0].properties.privateIPAddress,' ',variables('vm3'))]"
         }
       }
     }
