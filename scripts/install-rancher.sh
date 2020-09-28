@@ -25,9 +25,6 @@ echo "user='$user'"
 home=$(grep "^$user:" /etc/passwd | awk -F: '{print $6}')
 owner=$(grep "^$user:" /etc/passwd | grep "^$user:" /etc/passwd | awk -F: '{print $3,":",$4}' | sed 's/ //g')
 usermod -aG docker $user
-#mkdir $home/.ssh
-#chown -R $owner $home/.ssh
-#chmod 600 $home/.ssh
 ssh_rsa="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDBAcK82Xtg0pMnLacGyHnZFQbnER7HSPMS7++hT3Z4DJVsApCN/1QHkzwHFSe/VqOYJtRx9pN3Por3PjeOU/skb76p0AEsfj+qfA1rdlcVkh9AmNpVYk2KpSUfN4B5dnHSjRBeHNmuvYTbpid9NHPdt/JM9srlFXk66p9ljg19iAca7uEbAn6y9j46xYUCWzJI6Deai+x/ecpdpH3FiJ6AQhrE1jiOT8bMm9lcpjeaEZbGPGmHQYBt7Z9quSa57JL+NUgURY9PitbsdRxqqvxDbjSdxXzFu9UUOzet7aqcEEyDOADTtj8Ot/v5WpvZchGQSfAt1NCCeuvk6h3ISuhx"
 echo "$ssh_rsa" > $home/.ssh/authorized_keys
 chown -R $owner $home/.ssh
@@ -129,14 +126,8 @@ x8bswqHNdQF5Jy+Bt4QCfrVFaxnqsZgY2z3Dr7dtFo3aKy5N1zcs
 chown -R $owner $home/.ssh
 chmod -R 600 $home/.ssh/*
 
-#ssh -o "StrictHostKeyChecking no" $user@${host[0]} ls
-#[ $? != 0 ] && exit 1
-#ssh -o "StrictHostKeyChecking no" $user@${host[1]} ls
-#[ $? != 0 ] && exit 1
-#ssh -o "StrictHostKeyChecking no" $user@${host[2]} ls
-#[ $? != 0 ] && exit 1
-
 cd $home
+sleep 180
 rke up
 cp kube_config_cluster.yml .kube/config
 export KUBECONFIG=./kube_config_cluster.yml
