@@ -129,18 +129,20 @@ chmod -R 600 $home/.ssh/*
 cd $home
 sleep 180
 rke up
+mkdir .kube
+chown $owner
 cp kube_config_cluster.yml .kube/config
 export KUBECONFIG=./kube_config_cluster.yml
 kubectl get nodes
-sudo -S snap install helm3
-helm version
-helm repo add rancher-stable https://releases.rancher.com/server-charts/latest
+snap install helm3
+helm3 version
+helm3 repo add rancher-stable https://releases.rancher.com/server-charts/latest
 kubectl create namespace cattle-system
 kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v0.15.0/cert-manager.crds.yaml
 kubectl create namespace cert-manager
-helm repo add jetstack https://charts.jetstack.io
-helm repo update
-helm install cert-manager jetstack/cert-manager --namespace cert-manager --version v0.15.0
+helm3 repo add jetstack https://charts.jetstack.io
+helm3 repo update
+helm3 install cert-manager jetstack/cert-manager --namespace cert-manager --version v0.15.0
 sleep 60
 kubectl get pods --namespace cert-manager
 helm install rancher rancher-latest/rancher --namespace cattle-system -set hostname=rancher.my.org
