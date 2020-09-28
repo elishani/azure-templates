@@ -129,12 +129,12 @@ x8bswqHNdQF5Jy+Bt4QCfrVFaxnqsZgY2z3Dr7dtFo3aKy5N1zcs
 chown -R $owner $home/.ssh
 chmod -R 600 $home/.ssh/*
 
-ssh -o "StrictHostKeyChecking no" $user@${host[1]} ls
-[ $? != 0 ] && exit 1
-ssh -o "StrictHostKeyChecking no" $user@${host[2]} ls
-[ $? != 0 ] && exit 1
-ssh -o "StrictHostKeyChecking no" $user@${host[3]} ls
-[ $? != 0 ] && exit 1
+#ssh -o "StrictHostKeyChecking no" $user@${host[0]} ls
+#[ $? != 0 ] && exit 1
+#ssh -o "StrictHostKeyChecking no" $user@${host[1]} ls
+#[ $? != 0 ] && exit 1
+#ssh -o "StrictHostKeyChecking no" $user@${host[2]} ls
+#[ $? != 0 ] && exit 1
 
 cd $home
 rke up
