@@ -9,8 +9,10 @@ add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(
 apt update
 apt install -y docker-ce docker-ce-cli containerd.io
 
-user=$(grep 'x:1000:1000:' /etc/passwd | awk -F: '{print $1}')
-home=$(grep 'x:1000:1000:' /etc/passwd | awk -F: '{print $6}')
+user=$1
+shift
+echo "user='$user'"
+home=$(grep "^$user:" /etc/passwd | awk -F: '{print $6}')
 usermod -aG docker $user
 su -c 'mkdir $HOME/.ssh' - $user
 su -c 'chmod 700 $HOME/.ssh' - $user
@@ -18,9 +20,10 @@ su -c 'echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC2BMyRL1pvYi4JmAvsgimRQWouTeh
 
 # Run on one machine
 
-[ -z $(hostname  | grep 'vm1$') ] && exit
+[ -z $(hostname  | grep 'vm0$') ] && exit
 
 count=$1
+count=$((++count))
 shift
 ipp=()
 ipv=()
@@ -49,7 +52,7 @@ echo "Hosts List"
 echo "${host[@]}"
 
 file_name=cluster.yml
-
+echo "nodes:" > $file_name
 i=0
 for public_ip in "${ipp[@]}"
 do
@@ -67,3 +70,9 @@ done
 
 cp $file_name $home
 chown 1000:1000 $home/$filename
+
+cd $home
+rke up
+cp kube_config_cluster.yml .kube/config
+export KUBECONFIG=./kube_config_cluster.yml
+kubectl get nodes
