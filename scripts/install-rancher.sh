@@ -87,7 +87,7 @@ wget https://github.com/rancher/rke/releases/download/v1.2.0-rc15/rke_linux-amd6
 mv rke_linux-amd64 rke
 chmod +x rke
 rke --version
-echo "$ssh_rsa" > $home/.ssh/id_rsa
+echo "$ssh_rsa" > $home/.ssh/id_rsa.pub
 echo "-----BEGIN RSA PRIVATE KEY-----
 MIIEowIBAAKCAQEAwQHCvNl7YNKTJy2nBsh52RUG5xEex0jzEu/voU92eAyVbAKQ
 jf9UB5M8BxUnv1ajmCbUcfaTdz6K9z43jlP7JG++qdABLH4/qnwNa3ZXFZIfQJja
