@@ -26,12 +26,16 @@ home=$(grep "^$user:" /etc/passwd | awk -F: '{print $6}')
 owner=$(grep "^$user:" /etc/passwd | grep "^$user:" /etc/passwd | awk -F: '{print $3,":",$4}' | sed 's/ //g')
 usermod -aG docker $user
 
+ip_loadbalancer=$1
+echo "IP loadbalancer: '$ip_loadbalancer'"
+shift
+
 ssh_rsa="$1"
 shift
 ssh_rsa_pub="$1"
 shift
 
-echo $ssh_rsa_pub |tr ' ' '%' | tr '\n' '@' > $home/.ssh/authorized_keys
+echo $ssh_rsa_pub | tr '%' ' ' > $home/.ssh/authorized_keys
 chown -R $owner $home/.ssh
 chmod  600 $home/.ssh/*
 
@@ -73,7 +77,7 @@ echo "${ipv[@]}"
 
 echo "Hosts List"
 echo "${host[@]}"
-
+S
 file_name=cluster.yml
 echo "nodes:" > $file_name
 i=0
@@ -99,7 +103,7 @@ wget https://github.com/rancher/rke/releases/download/v1.2.0-rc15/rke_linux-amd6
 mv rke_linux-amd64 rke
 chmod +x rke
 rke --version
-echo $ssh_rsa |tr ' ' '%' | tr '\n' '@' > $home/.ssh/id_rsa
+echo $ssh_rsa | tr ' ' '%' | tr '\n' '@' > $home/.ssh/id_rsa
 chown -R $owner $home/.ssh
 chmod -R 600 $home/.ssh/*
 
