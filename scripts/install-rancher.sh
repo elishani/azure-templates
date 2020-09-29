@@ -69,10 +69,10 @@ if [ ! -z "$7" ];then
   host[2]=$9
 fi
 
-echo "Public ip"
+echo "Public IPs"
 echo "${ipp[@]}"
 
-echo "Private ip"
+echo "Private Ips"
 echo "${ipv[@]}"
 
 echo "Hosts List"
@@ -104,6 +104,7 @@ mv rke_linux-amd64 rke
 chmod +x rke
 rke --version
 echo $ssh_rsa | tr ' ' '%' | tr '\n' '@' > $home/.ssh/id_rsa
+echo $ssh_rsa_pub | tr '%' ' ' > $home/.ssh/id_rsa.pub
 chown -R $owner $home/.ssh
 chmod -R 600 $home/.ssh/*
 
