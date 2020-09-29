@@ -145,4 +145,4 @@ helm3 repo update
 helm3 install cert-manager jetstack/cert-manager --namespace cert-manager --version v0.15.0
 sleep 60
 kubectl get pods --namespace cert-manager
-helm3 install rancher rancher-latest/rancher --namespace cattle-system -set hostname=rancher.my.org
+helm3 install rancher rancher-latest/rancher --namespace cattle-system -set hostname=109.109.109.109
