@@ -103,7 +103,7 @@ wget https://github.com/rancher/rke/releases/download/v1.2.0-rc15/rke_linux-amd6
 mv rke_linux-amd64 rke
 chmod +x rke
 rke --version
-echo $ssh_rsa | tr ' ' '%' | tr '\n' '@' > $home/.ssh/id_rsa
+echo $ssh_rsa | tr ' ' '%' | tr '@' '\n' > $home/.ssh/id_rsa
 echo $ssh_rsa_pub | tr '%' ' ' > $home/.ssh/id_rsa.pub
 chown -R $owner $home/.ssh
 chmod -R 600 $home/.ssh/*
