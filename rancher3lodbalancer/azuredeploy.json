@@ -23,13 +23,6 @@
         "description": "Specifies the virtual machine administrator username."
       }
     },
-    "numberOfVMs": {
-      "type": "int",
-      "defaultValue": 4,
-      "metadata": {
-        "description": "Specifies the virtual machine administrator username."
-      }
-    },
     "authenticationType": {
       "type": "string",
       "defaultValue": "sshPublicKey",
@@ -58,6 +51,7 @@
     "nsgName": "[concat(parameters('projectName'),'-nsg')]",
     "vNetName": "[concat(parameters('projectName'),'-vnet')]",
     "vNetAddressPrefix": "10.0.0.0/16",
+    "numberOfVMs": 4,
     "ip0": "[concat(parameters('projectName'),'-vm0-publicIp')]",
     "ip1": "[concat(parameters('projectName'),'-vm1-publicIp')]",
     "ip2": "[concat(parameters('projectName'),'-vm2-publicIp')]",
@@ -221,7 +215,7 @@
       "location": "[parameters('location')]",
       "copy": {
         "name": "vmCopy",
-        "count": "[parameters('numberOfVMs')]"
+        "count": "[variables('numberOfVMs')]"
       },
       "dependsOn": [
         "networkInterfaceCopy"
@@ -269,7 +263,7 @@
       },
       "copy": {
         "name": "publicIPAddressCopy",
-        "count": "[parameters('numberOfVMs')]"
+        "count": "[variables('numberOfVMs')]"
       },
       "properties": {
         "publicIPAddressVersion": "IPv4",
@@ -283,7 +277,7 @@
       "location": "[parameters('location')]",
       "copy": {
         "name": "networkInterfaceCopy",
-        "count": "[parameters('numberOfVMs')]"
+        "count": "[variables('numberOfVMs')]"
       },
       "dependsOn": [
         "[resourceId('Microsoft.Network/virtualNetworks/', variables('vNetName'))]",
@@ -323,7 +317,7 @@
       "location": "[parameters('location')]",
       "copy": {
         "name": "extensionCopy",
-        "count": "[parameters('numberOfVMs')]"
+        "count": "[variables('numberOfVMs')]"
       },
       "dependsOn": [
             "vmCopy"
@@ -337,7 +331,7 @@
           "fileUris": [
                 "[uri(variables('_artifactsLocation'), concat(variables('scriptNameSh1'), variables('_artifactsLocationSasToken')))]"
           ],
-      "commandToExecute": "[concat('bash ', variables('scriptNameSh1'), ' ',parameters('adminUsername'),' ',parameters('numberOfVMs'),' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('ip0'))).IpAddress,' ',reference(variables('nic0')).ipConfigurations[0].properties.privateIPAddress,' ',variables('vm0'),' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('ip1'))).IpAddress,' ',reference(variables('nic1')).ipConfigurations[0].properties.privateIPAddress,' ',variables('vm1'),' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('ip2'))).IpAddress,' ',reference(variables('nic2')).ipConfigurations[0].properties.privateIPAddress,' ',variables('vm2'),' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('ip3'))).IpAddress,' ',reference(variables('nic3')).ipConfigurations[0].properties.privateIPAddress,' ',variables('vm3'))]"
+      "commandToExecute": "[concat('bash ', variables('scriptNameSh1'), ' ',parameters('adminUsername'),' ',variables('numberOfVMs'),' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('ip0'))).IpAddress,' ',reference(variables('nic0')).ipConfigurations[0].properties.privateIPAddress,' ',variables('vm0'),' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('ip1'))).IpAddress,' ',reference(variables('nic1')).ipConfigurations[0].properties.privateIPAddress,' ',variables('vm1'),' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('ip2'))).IpAddress,' ',reference(variables('nic2')).ipConfigurations[0].properties.privateIPAddress,' ',variables('vm2'),' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('ip3'))).IpAddress,' ',reference(variables('nic3')).ipConfigurations[0].properties.privateIPAddress,' ',variables('vm3'))]"
         }
       }
     }
