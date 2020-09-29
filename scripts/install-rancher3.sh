@@ -41,16 +41,11 @@ chmod  600 $home/.ssh/*
 
 # Run on one machine
 
-[ -z $(hostname  | grep 'vm0$') ] && exit
+[ -z $(hostname  | grep 'vm1$') ] && exit
 
 count=$1
 count=$((++count))
 shift
-ipp0=$1
-ipv0=$2
-host=$3
-echo "Master: $host $ipp0 $ipv0"
-shift;shift;shift
 
 ipp=()
 ipv=()
