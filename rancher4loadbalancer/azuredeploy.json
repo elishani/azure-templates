@@ -1,0 +1,351 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "projectName": {
+      "type": "string",
+      "defaultValue": "linnovate",
+      "metadata": {
+        "description": "Specifies a project name that is used for generating resource names."
+      }
+    },
+    "rsaPrivate": {
+      "type": "string",
+      "metadata": {
+        "description": "Specifies private rsa."
+      }
+    },
+    "rsaPublic": {
+      "type": "string",
+      "metadata": {
+        "description": "Specifies public rsa."
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Specifies the location for all of the resources created by this template."
+      }
+    },
+    "adminUsername": {
+      "type": "string",
+      "defaultValue": "vm",
+      "metadata": {
+        "description": "Specifies the virtual machine administrator username."
+      }
+    },
+    "authenticationType": {
+      "type": "string",
+      "defaultValue": "sshPublicKey",
+      "allowedValues": [
+        "sshPublicKey",
+        "password"
+      ],
+      "metadata": {
+        "description": "Type of authentication to use on the Virtual Machine. SSH key is recommended."
+      }
+    },
+    "adminPasswordOrKey": {
+      "type": "securestring",
+      "metadata": {
+        "description": "SSH Key or password for the Virtual Machine. SSH key is recommended."
+            }
+        }
+    },  
+    "variables": {
+    "lbName": "[concat(parameters('projectName'),'-lb')]",
+    "lbSkuName": "Standard",
+    "lbPublicIpAddressName": "[concat(parameters('projectName'),'-lbPublicIP')]",
+    "lbFrontEndName": "LoadBalancerFrontEnd",
+    "lbBackendPoolName": "LoadBalancerBackEndPool",
+    "lbProbeName": "loadBalancerHealthProbe",
+    "nsgName": "[concat(parameters('projectName'),'-nsg')]",
+    "vNetName": "[concat(parameters('projectName'),'-vnet')]",
+    "vNetAddressPrefix": "10.0.0.0/16",
+    "numberOfVMs": 4,
+    "ip0": "[concat(parameters('projectName'),'-vm0-publicIp')]",
+    "ip1": "[concat(parameters('projectName'),'-vm1-publicIp')]",
+    "ip2": "[concat(parameters('projectName'),'-vm2-publicIp')]",
+    "ip3": "[concat(parameters('projectName'),'-vm3-publicIp')]",
+    "vm0": "[concat(parameters('projectName'),'-vm0')]",
+    "vm1": "[concat(parameters('projectName'),'-vm1')]",
+    "vm2": "[concat(parameters('projectName'),'-vm2')]",
+    "vm3": "[concat(parameters('projectName'),'-vm3')]",
+    "nic0": "[concat(parameters('projectName'),'-vm0-networkInterface')]",
+    "nic1": "[concat(parameters('projectName'),'-vm1-networkInterface')]",
+    "nic2": "[concat(parameters('projectName'),'-vm2-networkInterface')]",
+    "nic3": "[concat(parameters('projectName'),'-vm3-networkInterface')]",
+    "vNetSubnetName": "BackendSubnet",
+    "vNetSubnetAddressPrefix": "10.0.1.0/24",
+    "vmStorageAccountType": "Standard_LRS",
+    "vmSize": "Standard_DS1_v2",
+    "_artifactsLocation": "https://raw.githubusercontent.com/elishani/azure-templates/master/scripts/",
+    "_artifactsLocationSasToken": "",
+    "scriptName1": "install-rancher",
+    "scriptNameSh1": "[concat(variables('scriptName1'), '.sh')]",
+    "linuxConfiguration": {
+        "disablePasswordAuthentication": true,
+          "ssh": {
+            "publicKeys": [
+             {
+              "path": "[concat('/home/', parameters('adminUsername'), '/.ssh/authorized_keys')]",
+              "keyData": "[parameters('adminPasswordOrKey')]"
+            }
+          ]
+        }
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Network/loadBalancers",
+      "apiVersion": "2020-05-01",
+      "name": "[variables('lbName')]",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "[variables('lbSkuName')]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/publicIPAddresses', variables('lbPublicIpAddressName'))]"
+      ],
+      "properties": {
+        "frontendIPConfigurations": [
+          {
+            "name": "[variables('lbFrontEndName')]",
+            "properties": {
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('lbPublicIpAddressName'))]"
+              }
+            }
+          }
+        ],
+        "backendAddressPools": [
+          {
+            "name": "[variables('lbBackendPoolName')]"
+          }
+        ],
+        "loadBalancingRules": [
+          {
+            "name": "HTTPLBRule",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[resourceId('Microsoft.Network/loadBalancers/frontendIPConfigurations', variables('lbName'), variables('lbFrontEndName'))]"
+              },
+              "backendAddressPool": {
+                "id": "[resourceId('Microsoft.Network/loadBalancers/backendAddressPools', variables('lbName'), variables('lbBackendPoolName'))]"
+              },
+              "frontendPort": 443,
+              "backendPort": 80,
+              "enableFloatingIP": false,
+              "idleTimeoutInMinutes": 4,
+              "protocol": "Tcp",
+              "enableTcpReset": false,
+              "loadDistribution": "Default",
+              "disableOutboundSnat": false,
+              "probe": {
+                "id": "[resourceId('Microsoft.Network/loadBalancers/probes', variables('lbName'), variables('lbProbeName'))]"
+              }
+            }
+          }
+        ],
+        "probes": [
+          {
+            "name": "[variables('lbProbeName')]",
+            "properties": {
+              "protocol": "Http",
+              "port": 80,
+              "requestPath": "/",
+              "intervalInSeconds": 5,
+              "numberOfProbes": 2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Network/publicIPAddresses",
+      "apiVersion": "2020-05-01",
+      "name": "[variables('lbPublicIPAddressName')]",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "[variables('lbSkuName')]"
+      },
+      "properties": {
+        "publicIPAddressVersion": "IPv4",
+        "publicIPAllocationMethod": "Static"
+      }
+    },
+    {
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "apiVersion": "2020-05-01",
+      "name": "[variables('nsgName')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "nsgRule1",
+            "properties": {
+            "description": "description",
+            "protocol": "Tcp",
+            "sourcePortRange": "*",
+            "destinationPortRanges": ["22", "80", "443", "8080", "6443"],
+            "sourceAddressPrefix": "*",
+            "destinationAddressPrefix": "*",
+            "access": "Allow",
+            "priority": 100,
+            "direction": "Inbound"
+          }
+        }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Network/virtualNetworks",
+      "apiVersion": "2020-05-01",
+      "name": "[variables('vNetName')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[variables('vNetAddressPrefix')]"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[variables('vNetSubnetName')]",
+            "properties": {
+              "addressPrefix": "[variables('vNetSubnetAddressPrefix')]"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines",
+      "apiVersion": "2019-12-01",
+      "name": "[concat(parameters('projectName'),'-vm', copyIndex())]",
+      "location": "[parameters('location')]",
+      "copy": {
+        "name": "vmCopy",
+        "count": "[variables('numberOfVMs')]"
+      },
+      "dependsOn": [
+        "networkInterfaceCopy"
+      ],
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[variables('vmSize')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "osDisk": {
+            "createOption": "fromImage",
+            "managedDisk": {
+              "storageAccountType": "[variables('vmStorageAccountType')]"
+            }
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('projectName'),'-vm', copyIndex(), '-networkInterface'))]"
+            }
+          ]
+        },
+        "osProfile": {
+          "computerName": "[concat(parameters('projectName'),'-vm', copyIndex())]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPasswordOrKey')]",
+          "linuxConfiguration": "[if(equals(parameters('authenticationType'), 'password'), json('null'), variables('linuxConfiguration'))]"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Network/publicIPAddresses",
+      "apiVersion": "2020-05-01",
+      "name": "[concat(parameters('projectName'),'-vm', copyIndex(), '-publicIp')]",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "Standard"
+      },
+      "copy": {
+        "name": "publicIPAddressCopy",
+        "count": "[variables('numberOfVMs')]"
+      },
+      "properties": {
+        "publicIPAddressVersion": "IPv4",
+        "publicIPAllocationMethod": "Static"
+      }
+    },
+    {
+      "type": "Microsoft.Network/networkInterfaces",
+      "apiVersion": "2020-05-01",
+      "name": "[concat(parameters('projectName'),'-vm', copyIndex(), '-networkInterface')]",
+      "location": "[parameters('location')]",
+      "copy": {
+        "name": "networkInterfaceCopy",
+        "count": "[variables('numberOfVMs')]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks/', variables('vNetName'))]",
+        "[resourceId('Microsoft.Network/loadBalancers/', variables('lbName'))]",
+        "[resourceId('Microsoft.Network/networkSecurityGroups/', variables('nsgName'))]",
+        "publicIPAddressCopy"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Static",
+              "subnet": {
+                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vNetName'), variables('vNetSubnetName'))]"
+              },
+              "publicIpAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIpAddresses', concat(parameters('projectName'),'-vm', copyIndex(), '-publicIp'))]"
+              },
+              "loadBalancerBackendAddressPools": [
+                {
+                  "id": "[resourceId('Microsoft.Network/loadBalancers/backendAddressPools', variables('lbName'), variables('lbBackendPoolName'))]"
+                }
+              ]
+            }
+          }
+        ],
+        "networkSecurityGroup": {
+          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('nsgName'))]"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(parameters('projectName'),'-vm',copyIndex(), '/', variables('scriptName1'))]",
+      "apiVersion": "2020-06-01",
+      "location": "[parameters('location')]",
+      "copy": {
+        "name": "extensionCopy",
+        "count": "[variables('numberOfVMs')]"
+      },
+      "dependsOn": [
+            "vmCopy"
+      ],
+      "properties": {
+      "publisher": "Microsoft.Azure.Extensions",
+      "type": "CustomScript",
+      "typeHandlerVersion": "2.0",
+      "autoUpgradeMinorVersion": true,
+      "settings": {
+          "fileUris": [
+                "[uri(variables('_artifactsLocation'), concat(variables('scriptNameSh1'), variables('_artifactsLocationSasToken')))]"
+          ],
+      "commandToExecute": "[concat('bash ', variables('scriptNameSh1'), ' ',parameters('adminUsername'),' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('lbPublicIPAddressName'))).IpAddress,' ',parameters('rsaPrivate'),' ', parameters('rsaPublic'),' ',variables('numberOfVMs'),' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('ip0'))).IpAddress,' ',reference(variables('nic0')).ipConfigurations[0].properties.privateIPAddress,' ',variables('vm0'),' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('ip1'))).IpAddress,' ',reference(variables('nic1')).ipConfigurations[0].properties.privateIPAddress,' ',variables('vm1'),' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('ip2'))).IpAddress,' ',reference(variables('nic2')).ipConfigurations[0].properties.privateIPAddress,' ',variables('vm2'),' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('ip3'))).IpAddress,' ',reference(variables('nic3')).ipConfigurations[0].properties.privateIPAddress,' ',variables('vm3'))]"
+        }
+      }
+    }
+  ]
+}
