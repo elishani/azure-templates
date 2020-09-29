@@ -130,7 +130,7 @@ cd $home
 sleep 180
 rke up
 mkdir .kube
-chown $owner
+chown $owner .kube
 cp kube_config_cluster.yml .kube/config
 export KUBECONFIG=./kube_config_cluster.yml
 kubectl get nodes
