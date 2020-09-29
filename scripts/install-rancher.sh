@@ -136,7 +136,7 @@ export KUBECONFIG=./kube_config_cluster.yml
 kubectl get nodes
 snap install helm3
 helm3 version
-helm3 repo add rancher-stable https://releases.rancher.com/server-charts/latest
+helm3 repo add rancher-latest https://releases.rancher.com/server-charts/latest
 kubectl create namespace cattle-system
 kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v0.15.0/cert-manager.crds.yaml
 kubectl create namespace cert-manager
