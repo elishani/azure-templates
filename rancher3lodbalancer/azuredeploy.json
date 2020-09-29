@@ -9,6 +9,18 @@
         "description": "Specifies a project name that is used for generating resource names."
       }
     },
+    "rsaPrivate": {
+      "type": "string",
+      "metadata": {
+        "description": "Specifies private rsa."
+      }
+    },
+    "rsaPublic": {
+      "type": "string",
+      "metadata": {
+        "description": "Specifies public rsa."
+      }
+    },
     "location": {
       "type": "string",
       "defaultValue": "[resourceGroup().location]",
@@ -40,19 +52,7 @@
         "description": "SSH Key or password for the Virtual Machine. SSH key is recommended."
             }
         }
-    },
-    "rsaPrivate": {
-      "type": "string",
-      "metadata": {
-        "description": "Specifies private rsa."
-      }
-    },
-    "rsaPublic": {
-      "type": "string",
-      "metadata": {
-        "description": "Specifies public rsa."
-      }
-    },
+    },  
     "variables": {
     "lbName": "[concat(parameters('projectName'),'-lb')]",
     "lbSkuName": "Standard",
