@@ -109,7 +109,7 @@ chown -R $owner $home/.ssh
 chmod -R 600 $home/.ssh/*
 
 cd $home
-echo "sleep 60 secondes"
+echo "Sleeping 60 secondes"
 sleep 60
 rke up
 mkdir .kube
@@ -126,7 +126,7 @@ kubectl create namespace cert-manager
 helm3 repo add jetstack https://charts.jetstack.io
 helm3 repo update
 helm3 install cert-manager jetstack/cert-manager --namespace cert-manager --version v0.15.0
-cho "sleep 15 secondes"
+echo "Sleeping 15 secondes"
 sleep 15
 kubectl get pods --namespace cert-manager
 helm3 install rancher rancher-latest/rancher --namespace cattle-system --set hostname=$ip_loadbalancer
