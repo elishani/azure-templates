@@ -49,7 +49,7 @@ shift
 ipp0=$1
 ipv0=$2
 host=$3
-echo "MV: $host $ipp0 $ipv0"
+echo "Master: $host $ipp0 $ipv0"
 shift;shift;shift
 
 ipp=()
