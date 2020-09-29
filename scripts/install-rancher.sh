@@ -31,7 +31,7 @@ shift
 ssh_rsa_pub="$1"
 shift
 
-echo "$ssh_rsa_pub" > $home/.ssh/authorized_keys
+echo "$ssh_rsa_pub | tr '@' ' '" > $home/.ssh/authorized_keys
 chown -R $owner $home/.ssh
 chmod  600 $home/.ssh/*
 
@@ -99,7 +99,7 @@ wget https://github.com/rancher/rke/releases/download/v1.2.0-rc15/rke_linux-amd6
 mv rke_linux-amd64 rke
 chmod +x rke
 rke --version
-echo "$ssh_rsa" > $home/.ssh/id_rsa
+echo "$ssh_rsa | tr '@' '\n" > $home/.ssh/id_rsa
 chown -R $owner $home/.ssh
 chmod -R 600 $home/.ssh/*
 
