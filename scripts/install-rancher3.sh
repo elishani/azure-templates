@@ -43,6 +43,11 @@ chmod  600 $home/.ssh/*
 
 [ -z $(hostname  | grep 'vm1$') ] && exit
 
+fqdn=$1
+echo "fqdn='$fqdn'"
+echo "$ip_loadbalancer $fqdn" >> /etc/hosts
+shift
+
 count=$1
 count=$((++count))
 shift
@@ -72,7 +77,7 @@ echo "${ipv[@]}"
 
 echo "Hosts List"
 echo "${host[@]}"
-S
+
 file_name=cluster.yml
 echo "nodes:" > $file_name
 i=0
@@ -124,4 +129,4 @@ helm3 install cert-manager jetstack/cert-manager --namespace cert-manager --vers
 echo "Sleeping 15 secondes"
 sleep 15
 kubectl get pods --namespace cert-manager
-helm3 install rancher rancher-latest/rancher --namespace cattle-system --set hostname=$ip_loadbalancer
+helm3 install rancher rancher-latest/rancher --namespace cattle-system --set hostname=$fqdnq

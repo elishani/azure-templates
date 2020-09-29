@@ -21,6 +21,12 @@
         "description": "Specifies public rsa."
       }
     },
+    "DnsName": {
+      "type": "string",
+      "metadata": {
+        "description": "Dns name for mv to the rancher"
+      }
+    },
     "location": {
       "type": "string",
       "defaultValue": "[resourceGroup().location]",
@@ -79,7 +85,7 @@
     "vmSize": "Standard_DS1_v2",
     "_artifactsLocation": "https://raw.githubusercontent.com/elishani/azure-templates/master/scripts/",
     "_artifactsLocationSasToken": "",
-    "scriptName1": "install-rancher",
+    "scriptName1": "install-rancher3",
     "scriptNameSh1": "[concat(variables('scriptName1'), '.sh')]",
     "linuxConfiguration": {
         "disablePasswordAuthentication": true,
@@ -220,7 +226,7 @@
     {
       "type": "Microsoft.Compute/virtualMachines",
       "apiVersion": "2019-12-01",
-      "name": "[concat(parameters('projectName'),'-vm', copyIndex())]",
+      "name": "[concat(parameters('projectName'),'-vm', copyIndex(1))]",
       "location": "[parameters('location')]",
       "copy": {
         "name": "vmCopy",
@@ -250,12 +256,12 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('projectName'),'-vm', copyIndex(), '-networkInterface'))]"
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('projectName'),'-vm', copyIndex(1), '-networkInterface'))]"
             }
           ]
         },
         "osProfile": {
-          "computerName": "[concat(parameters('projectName'),'-vm', copyIndex())]",
+          "computerName": "[concat(parameters('projectName'),'-vm', copyIndex(1))]",
           "adminUsername": "[parameters('adminUsername')]",
           "adminPassword": "[parameters('adminPasswordOrKey')]",
           "linuxConfiguration": "[if(equals(parameters('authenticationType'), 'password'), json('null'), variables('linuxConfiguration'))]"
@@ -265,7 +271,7 @@
     {
       "type": "Microsoft.Network/publicIPAddresses",
       "apiVersion": "2020-05-01",
-      "name": "[concat(parameters('projectName'),'-vm', copyIndex(), '-publicIp')]",
+      "name": "[concat(parameters('projectName'),'-vm', copyIndex(1), '-publicIp')]",
       "location": "[parameters('location')]",
       "sku": {
         "name": "Standard"
@@ -282,7 +288,7 @@
     {
       "type": "Microsoft.Network/networkInterfaces",
       "apiVersion": "2020-05-01",
-      "name": "[concat(parameters('projectName'),'-vm', copyIndex(), '-networkInterface')]",
+      "name": "[concat(parameters('projectName'),'-vm', copyIndex(1), '-networkInterface')]",
       "location": "[parameters('location')]",
       "copy": {
         "name": "networkInterfaceCopy",
@@ -304,7 +310,7 @@
                 "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vNetName'), variables('vNetSubnetName'))]"
               },
               "publicIpAddress": {
-                "id": "[resourceId('Microsoft.Network/publicIpAddresses', concat(parameters('projectName'),'-vm', copyIndex(), '-publicIp'))]"
+                "id": "[resourceId('Microsoft.Network/publicIpAddresses', concat(parameters('projectName'),'-vm', copyIndex(1), '-publicIp'))]"
               },
               "loadBalancerBackendAddressPools": [
                 {
@@ -321,7 +327,7 @@
     },
     {
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(parameters('projectName'),'-vm',copyIndex(), '/', variables('scriptName1'))]",
+      "name": "[concat(parameters('projectName'),'-vm',copyIndex(1), '/', variables('scriptName1'))]",
       "apiVersion": "2020-06-01",
       "location": "[parameters('location')]",
       "copy": {
@@ -340,7 +346,7 @@
           "fileUris": [
                 "[uri(variables('_artifactsLocation'), concat(variables('scriptNameSh1'), variables('_artifactsLocationSasToken')))]"
           ],
-      "commandToExecute": "[concat('bash ', variables('scriptNameSh1'), ' ',parameters('adminUsername'),' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('lbPublicIPAddressName'))).IpAddress,' ',parameters('rsaPrivate'),' ', parameters('rsaPublic'),' ',variables('numberOfVMs'),' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('ip1'))).IpAddress,' ',reference(variables('nic1')).ipConfigurations[0].properties.privateIPAddress,' ',variables('vm1'),' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('ip2'))).IpAddress,' ',reference(variables('nic2')).ipConfigurations[0].properties.privateIPAddress,' ',variables('vm2'),' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('ip3'))).IpAddress,' ',reference(variables('nic3')).ipConfigurations[0].properties.privateIPAddress,' ',variables('vm3'))]"
+      "commandToExecute": "[concat('bash ', variables('scriptNameSh1'),' ',parameters('adminUsername'),' ',parameters('DnsName'),' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('lbPublicIPAddressName'))).IpAddress,' ',parameters('rsaPrivate'),' ', parameters('rsaPublic'),' ',variables('numberOfVMs'),' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('ip1'))).IpAddress,' ',reference(variables('nic1')).ipConfigurations[0].properties.privateIPAddress,' ',variables('vm1'),' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('ip2'))).IpAddress,' ',reference(variables('nic2')).ipConfigurations[0].properties.privateIPAddress,' ',variables('vm2'),' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('ip3'))).IpAddress,' ',reference(variables('nic3')).ipConfigurations[0].properties.privateIPAddress,' ',variables('vm3'))]"
         }
       }
     }
