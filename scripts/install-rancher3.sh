@@ -21,7 +21,7 @@ apt-mark hold kubelet kubeadm kubectl
 
 user_name=$1
 user_phone=$2
-useremail=$3
+usere_mail=$3
 shift;shift;shift
 
 user=$1
@@ -32,9 +32,9 @@ owner=$(grep "^$user:" /etc/passwd | grep "^$user:" /etc/passwd | awk -F: '{prin
 usermod -aG docker $user
 
 user_file=user_information.txt
-echo "User nmae: '$user_name'" > $user_file
-echo "User nmae: '$user_name'" >> $user_file
-echo "User nmae: '$user_name'" >> $user_file
+echo "User Name: '$user_name'" > $user_file
+echo "User Phone: '$user_phone'" >> $user_file
+echo "User Email: '$usere_mail'" >> $user_file
 cp $user_file $home
 
 ip_loadbalancer=$1
