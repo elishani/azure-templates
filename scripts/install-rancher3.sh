@@ -98,7 +98,7 @@ done
 
 cp $file_name $home
 chown $owner $home/$filename
-exit
+
 cd /usr/local/bin
 wget https://github.com/rancher/rke/releases/download/v1.2.0-rc15/rke_linux-amd64
 mv rke_linux-amd64 rke
@@ -109,17 +109,16 @@ echo $ssh_rsa_pub | tr '%' ' ' > $home/.ssh/id_rsa.pub
 chown -R $owner $home/.ssh
 chmod -R 600 $home/.ssh/*
 
-cd $home
-echo "Sleeping for 60 secondes"
-sleep 60
+snap install helm3
+helm3 version
+
+cat > $home/run_rke.sh <<EOF
 rke up
 mkdir .kube
-chown $owner .kube
 cp kube_config_cluster.yml .kube/config
 export KUBECONFIG=./kube_config_cluster.yml
 kubectl get nodes
-snap install helm3
-helm3 version
+
 helm3 repo add rancher-latest https://releases.rancher.com/server-charts/latest
 kubectl create namespace cattle-system
 kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v0.15.0/cert-manager.crds.yaml
@@ -131,3 +130,6 @@ echo "Sleeping for 15 secondes"
 sleep 15
 kubectl get pods --namespace cert-manager
 helm3 install rancher rancher-latest/rancher --namespace cattle-system --set hostname=$fqdnq
+EOF
+cd $home 
+su -c "bash -xv run_rke.sh"
