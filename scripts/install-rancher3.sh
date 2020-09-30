@@ -45,10 +45,7 @@ cp $user_file $home
 cat $user_file
 
 ip_loadbalancer=$1
-echo "IP loadbalancer: '$ip_loadbalancer'" > $home/loadbalancerIP.txt
-cat $home/loadbalancerIP.txt
-chown $owner $home/loadbalancerIP.txt
-cat $home/loadbalancerIP.txt
+echo "IP loadbalancer: '$ip_loadbalancer'" | tee  $home/loadbalancerIP.txt
 shift
 
 ssh_rsa="$1"
@@ -64,8 +61,8 @@ chmod  600 $home/.ssh/*
 [ -z $(hostname  | grep 'vm1$') ] && exit
 
 fqdn=$1
-echo "fqdn='$fqdn'"
-echo "$ip_loadbalancer $fqdn" >> /etc/hosts
+echo "FQDN: '$fqdn'" | tee -a  $home/loadbalancerIP.txt
+chown $owner $home/loadbalancerIP.txt
 shift
 
 count=$1
@@ -160,9 +157,10 @@ helm3 install cert-manager jetstack/cert-manager --namespace cert-manager --vers
 echo "Sleeping for 15 secondes"
 sleep 15
 kubectl get pods --namespace cert-manager
-helm3 install rancher rancher-latest/rancher --namespace cattle-system --set hostname=$fqdn
-
-echo "End of story"
 EOF
+
+echo "helm3 install rancher rancher-latest/rancher --namespace cattle-system --set hostname=$fqdn" >> $home/run_rke.sh
+echo "echo '*************  End of story  *************'" >> $home/run_rke.sh 
+
 cd $home 
 su -c "bash -xv run_rke.sh" - $user
