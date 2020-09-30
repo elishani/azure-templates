@@ -1,8 +1,7 @@
 #!/bin/bash
 
 echo
-echo "Parameters list: $@"
-echo "Parameters list: $@" > parameters.list
+echo "Parameters list: $@" | tee parameters.list
 echo "_________________________________________________________________________________________"
 
 apt update
@@ -154,6 +153,7 @@ kubectl create namespace cert-manager
 helm3 repo add jetstack https://charts.jetstack.io
 helm3 repo update
 helm3 install cert-manager jetstack/cert-manager --namespace cert-manager --version v0.15.0
+
 echo "Sleeping for 15 secondes"
 sleep 15
 kubectl get pods --namespace cert-manager

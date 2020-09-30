@@ -13,7 +13,7 @@
       "type": "string",
         "defaultValue": "Eli_Shani",
       "metadata": {
-        "description": "User name instead space mark _."
+        "description": "User name NO SPACE IS ALLOWED instead space mark _."
       }
     },
     "UserPhoneNumber": {
