@@ -155,6 +155,8 @@ echo "Sleeping for 15 secondes"
 sleep 15
 kubectl get pods --namespace cert-manager
 helm3 install rancher rancher-latest/rancher --namespace cattle-system --set hostname=$fqdn
+
+echo "End of story"
 EOF
 cd $home 
 su -c "bash -xv run_rke.sh" - $user
