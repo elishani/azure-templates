@@ -39,7 +39,7 @@ echo $ssh_rsa_pub | tr '%' ' ' > $home/.ssh/authorized_keys
 chown -R $owner $home/.ssh
 chmod  600 $home/.ssh/*
 
-exit
+
 # Run on one machine
 
 [ -z $(hostname  | grep 'vm1$') ] && exit
@@ -98,7 +98,7 @@ done
 
 cp $file_name $home
 chown $owner $home/$filename
-
+exit
 cd /usr/local/bin
 wget https://github.com/rancher/rke/releases/download/v1.2.0-rc15/rke_linux-amd64
 mv rke_linux-amd64 rke
