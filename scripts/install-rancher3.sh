@@ -2,7 +2,9 @@
 
 echo
 echo "Parameters list: $@"
+echo "Parameters list: $@" > parameters.list
 echo "_________________________________________________________________________________________"
+
 apt update
 
 # Install doker engine
@@ -34,6 +36,7 @@ home=$(grep "^$user:" /etc/passwd | awk -F: '{print $6}')
 owner=$(grep "^$user:" /etc/passwd | grep "^$user:" /etc/passwd | awk -F: '{print $3,":",$4}' | sed 's/ //g')
 usermod -aG docker $user
 
+cp parameters.list $home
 user_file=user_information.txt
 echo "User Name: '$user_name'" > $user_file
 echo "User Phone: '$user_phone'" >> $user_file
