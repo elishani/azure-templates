@@ -1,5 +1,8 @@
 #!/bin/bash
 
+echo
+echo "Parameters list: $@"
+echo "_________________________________________________________________________________________"
 apt update
 
 # Install doker engine
