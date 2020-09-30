@@ -160,6 +160,7 @@ kubectl get pods --namespace cert-manager
 EOF
 
 echo "helm3 install rancher rancher-latest/rancher --namespace cattle-system --set hostname=$fqdn" >> $home/run_rke.sh
+echo
 echo "echo '*************  End of story  *************'" >> $home/run_rke.sh 
 
 cd $home 
