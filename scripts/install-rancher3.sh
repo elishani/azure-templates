@@ -27,7 +27,9 @@ owner=$(grep "^$user:" /etc/passwd | grep "^$user:" /etc/passwd | awk -F: '{prin
 usermod -aG docker $user
 
 ip_loadbalancer=$1
-echo "IP loadbalancer: '$ip_loadbalancer'"
+echo "IP loadbalancer: '$ip_loadbalancer'" > $home/loadbalancerIP.txt
+chown $owner $home/loadbalancerIP.txt
+cat $home/loadbalancerIP.txt
 shift
 
 ssh_rsa="$1"
@@ -112,9 +114,12 @@ chmod -R 600 $home/.ssh/*
 snap install helm3
 helm3 version
 
+echo "***RUN: $home/run_rke.sh as user '$user'"
+
 cat > $home/run_rke.sh <<EOF
+echo y | rke remove
 rke up
-mkdir .kube
+[ ! -d ..kube ] && mkdir .kube
 cp kube_config_cluster.yml .kube/config
 export KUBECONFIG=./kube_config_cluster.yml
 kubectl get nodes
