@@ -117,6 +117,8 @@ helm3 version
 echo "***RUN: $home/run_rke.sh as user '$user'"
 
 cat > $home/run_rke.sh <<EOF
+#!/bin/bash
+
 echo y | rke remove
 rke up
 [ ! -d ..kube ] && mkdir .kube
