@@ -124,7 +124,6 @@ if [[ ! -z `id | grep '(root)'` ]] ; then
   exit 1
 fi
 
-
 echo y | rke remove
 rke up
 [ ! -d ..kube ] && mkdir .kube
