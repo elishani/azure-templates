@@ -119,6 +119,12 @@ echo "***RUN: $home/run_rke.sh as user '$user'"
 cat > $home/run_rke.sh <<EOF
 #!/bin/bash
 
+if [[ ! -z `id | grep '(root)'` ]] ; then
+  echo "Can't be run as root"
+  exit 1
+fi
+
+
 echo y | rke remove
 rke up
 [ ! -d ..kube ] && mkdir .kube
