@@ -119,7 +119,7 @@ echo "***RUN: $home/run_rke.sh as user '$user'"
 cat > $home/run_rke.sh <<EOF
 #!/bin/bash
 
-u=$(id | grep root)
+u=$(id | grep root | awk -F'=' '{print \$1}')
 if [ ! -z \$u ]; then
   echo "Can't be run as root"
   exit 1
