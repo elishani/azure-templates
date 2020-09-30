@@ -36,9 +36,11 @@ echo "User Name: '$user_name'" > $user_file
 echo "User Phone: '$user_phone'" >> $user_file
 echo "User Email: '$usere_mail'" >> $user_file
 cp $user_file $home
+cat $user_file
 
 ip_loadbalancer=$1
 echo "IP loadbalancer: '$ip_loadbalancer'" > $home/loadbalancerIP.txt
+cat $home/loadbalancerIP.txt
 chown $owner $home/loadbalancerIP.txt
 cat $home/loadbalancerIP.txt
 shift
@@ -108,6 +110,7 @@ EOF
 done
 
 cp $file_name $home
+cat $file_name
 chown $owner $home/$filename
 
 cd /usr/local/bin
