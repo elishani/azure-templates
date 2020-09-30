@@ -19,12 +19,23 @@ apt-get update
 apt-get install -y kubelet kubeadm kubectl
 apt-mark hold kubelet kubeadm kubectl
 
+user_name=$1
+user_phone=$2
+useremail=$3
+shift;shift;shift
+
 user=$1
 shift
 echo "user='$user'"
 home=$(grep "^$user:" /etc/passwd | awk -F: '{print $6}')
 owner=$(grep "^$user:" /etc/passwd | grep "^$user:" /etc/passwd | awk -F: '{print $3,":",$4}' | sed 's/ //g')
 usermod -aG docker $user
+
+user_file=user_information.txt
+echo "User nmae: '$user_name'" > $user_file
+echo "User nmae: '$user_name'" >> $user_file
+echo "User nmae: '$user_name'" >> $user_file
+cp $user_file $home
 
 ip_loadbalancer=$1
 echo "IP loadbalancer: '$ip_loadbalancer'" > $home/loadbalancerIP.txt
@@ -33,16 +44,14 @@ cat $home/loadbalancerIP.txt
 shift
 
 ssh_rsa="$1"
-shift
-ssh_rsa_pub="$1"
-shift
+ssh_rsa_pub="$2"
+shift;shift
 
 echo $ssh_rsa_pub | tr '%' ' ' > $home/.ssh/authorized_keys
 chown -R $owner $home/.ssh
 chmod  600 $home/.ssh/*
 
-
-# Run on one machine
+# RUN ONLY ON ONE MACHINE
 
 [ -z $(hostname  | grep 'vm1$') ] && exit
 
@@ -127,7 +136,7 @@ fi
 
 echo y | rke remove
 rke up
-[ ! -d ..kube ] && mkdir .kube
+[ ! -d .kube ] && mkdir .kube
 cp kube_config_cluster.yml .kube/config
 export KUBECONFIG=./kube_config_cluster.yml
 kubectl get nodes
@@ -142,7 +151,7 @@ helm3 install cert-manager jetstack/cert-manager --namespace cert-manager --vers
 echo "Sleeping for 15 secondes"
 sleep 15
 kubectl get pods --namespace cert-manager
-helm3 install rancher rancher-latest/rancher --namespace cattle-system --set hostname=$fqdnq
+helm3 install rancher rancher-latest/rancher --namespace cattle-system --set hostname=$fqdn
 EOF
 cd $home 
 su -c "bash -xv run_rke.sh" - $user

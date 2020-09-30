@@ -4,9 +4,30 @@
   "parameters": {
     "projectName": {
       "type": "string",
-      "defaultValue": "linnovate",
+      "defaultValue": "rancher",
       "metadata": {
         "description": "Specifies a project name that is used for generating resource names."
+        }
+      },
+    "UserName": {
+      "type": "string",
+        "defaultValue": "Eli_Shani",
+      "metadata": {
+        "description": "User name instead space mark _."
+      }
+    },
+    "UserPhoneNumber": {
+      "type": "string",
+        "defaultValue": "035798353",
+      "metadata": {
+        "description": "User phone number for connecting."
+      }
+    },
+    "UserEmail": {
+      "type": "string",
+        "defaultValue": "elishani50@gmail.com",
+      "metadata": {
+        "description": "Email address for user."
       }
     },
     "rsaPrivate": {
@@ -346,7 +367,7 @@
           "fileUris": [
                 "[uri(variables('_artifactsLocation'), concat(variables('scriptNameSh1'), variables('_artifactsLocationSasToken')))]"
           ],
-      "commandToExecute": "[concat('bash ', variables('scriptNameSh1'),' ',parameters('adminUsername'),' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('lbPublicIPAddressName'))).IpAddress,' ',parameters('rsaPrivate'),' ', parameters('rsaPublic'),' ',parameters('DnsName'),' ',variables('numberOfVMs'),' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('ip1'))).IpAddress,' ',reference(variables('nic1')).ipConfigurations[0].properties.privateIPAddress,' ',variables('vm1'),' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('ip2'))).IpAddress,' ',reference(variables('nic2')).ipConfigurations[0].properties.privateIPAddress,' ',variables('vm2'),' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('ip3'))).IpAddress,' ',reference(variables('nic3')).ipConfigurations[0].properties.privateIPAddress,' ',variables('vm3'))]"
+      "commandToExecute": "[concat('bash ', variables('scriptNameSh1'),' ',parameters('UserName'),' ',parameters('UserPhoneNumber'),' ',parameters('UserEmail'),' ',parameters('adminUsername'),' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('lbPublicIPAddressName'))).IpAddress,' ',parameters('rsaPrivate'),' ', parameters('rsaPublic'),' ',parameters('DnsName'),' ',variables('numberOfVMs'),' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('ip1'))).IpAddress,' ',reference(variables('nic1')).ipConfigurations[0].properties.privateIPAddress,' ',variables('vm1'),' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('ip2'))).IpAddress,' ',reference(variables('nic2')).ipConfigurations[0].properties.privateIPAddress,' ',variables('vm2'),' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('ip3'))).IpAddress,' ',reference(variables('nic3')).ipConfigurations[0].properties.privateIPAddress,' ',variables('vm3'))]"
         }
       }
     }
