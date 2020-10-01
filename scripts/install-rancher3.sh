@@ -1,8 +1,6 @@
 #!/bin/bash
 
-echo
-echo "Parameters list: $@" | tee parameters.list
-echo "_________________________________________________________________________________________"
+echo "Parameters list: $@" > parameters.list
 
 apt update
 
@@ -44,7 +42,7 @@ cp $user_file $home
 cat $user_file
 
 ip_loadbalancer=$1
-echo "IP loadbalancer: '$ip_loadbalancer'" | tee  $home/loadbalancerIP.txt
+echo "IP loadbalancer: '$ip_loadbalancer'" > $home/loadbalancerIP.txt
 shift
 
 ssh_rsa="$1"
@@ -60,7 +58,7 @@ chmod  600 $home/.ssh/*
 [ -z $(hostname  | grep 'vm1$') ] && exit
 
 fqdn=$1
-echo "FQDN: '$fqdn'" | tee -a  $home/loadbalancerIP.txt
+echo "FQDN: '$fqdn'" >> -a  $home/loadbalancerIP.txt
 chown $owner $home/loadbalancerIP.txt
 shift
 

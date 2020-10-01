@@ -4,7 +4,7 @@
   "parameters": {
     "projectName": {
       "type": "string",
-      "defaultValue": "rancher",
+      "defaultValue": "eli",
       "metadata": {
         "description": "Specifies a project name that is used for generating resource names."
         }
