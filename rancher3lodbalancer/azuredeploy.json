@@ -11,18 +11,21 @@
       },
     "UserName": {
       "type": "string",
+        "defaultValue": "Eli_Shani",
       "metadata": {
         "description": "User name NO SPACE IS ALLOWED instead space mark _."
       }
     },
     "UserPhoneNumber": {
       "type": "string",
+        "defaultValue": "035798353",
       "metadata": {
         "description": "User phone number for connecting."
       }
     },
     "UserEmail": {
       "type": "string",
+        "defaultValue": "elishani50@gmail.com",
       "metadata": {
         "description": "Email address for user."
       }
