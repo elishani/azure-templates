@@ -160,7 +160,7 @@
                 "id": "[resourceId('Microsoft.Network/loadBalancers/backendAddressPools', variables('lbName'), variables('lbBackendPoolName'))]"
               },
               "frontendPort": 443,
-              "backendPort": 80,
+              "backendPort": 443,
               "enableFloatingIP": false,
               "idleTimeoutInMinutes": 4,
               "protocol": "Tcp",
