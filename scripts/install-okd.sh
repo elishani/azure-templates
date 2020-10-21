@@ -11,7 +11,7 @@ echo "Ip='$ip'"
 user_home=/home/$user
 
 sleep 60
-#yum -y update
+yum -y update --exclude=WALinuxAgent
 yum install -y yum-utils device-mapper-persistent-data lvm2
 yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
 yum install -y  docker-ce docker-ce-cli containerd.io
@@ -44,6 +44,7 @@ wget https://github.com/openshift/origin/releases/download/v3.11.0/openshift-ori
 tar xvf openshift-origin-client-tools*.tar.gz
 cd openshift-origin-client-tools*
 mv  oc kubectl  /usr/local/bin/
+echo "PATH=$PATH:/usr/local/bin" >> /etc/profile
 cd $user_home
 
 file=$user_home/start_cluster
