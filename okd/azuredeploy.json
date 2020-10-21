@@ -4,7 +4,7 @@
     "parameters": {
     "adminUsername": {
       "type": "string",
-      "defaultValue": "vm",
+      "defaultValue": "okdadmin",
       "metadata": {
         "description": "Username for the Virtual Machine."
             }  
@@ -31,9 +31,10 @@
     "variables": {
         "location": "[resourceGroup().location]", 
         "vmName1": "centos7",
-        "OS": "18.04-LTS",
+        "imagePublisher": "OpenLogic",
+        "imageOffer": "CentOS",
+        "imageSKU": "7.5",
         "publicIP1": "[concat(variables('vmName1'), '-PublicIP')]",
-        "storageName": "[toLower( concat('staccount', parameters('storageSufix')))]",
         "nsgName": "[concat(variables('vmName1'), '-NSG')]",
         "VirtualNetworkName": "[concat(variables('vmName1'), '-VirtualNetwork')]",
         "interfaceName1": "[concat(variables('vmName1'), '-NetworkInterface')]",
@@ -173,10 +174,10 @@
                 },
                 "storageProfile": {
                     "imageReference": {
-                        "publisher": "Canonical",
-                        "offer": "UbuntuServer",
-                        "sku": "[variables('OS')]",
-                        "version": "latest"
+                         "publisher": "[variables('imagePublisher')]",
+                        "offer": "[variables('imageOffer')]",
+                        "sku": "[variables('imageSKU')]",
+            "version": "latest"
                     },
                     "osDisk": {
                         "name": "[concat(variables('vmName1'), '-OSDisk')]",
@@ -190,12 +191,6 @@
                             "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('interfaceName1'))]"
                         }
                     ]
-                },
-                "diagnosticsProfile": {
-                    "bootDiagnostics": {
-                        "enabled": true,
-                        "storageUri": "[reference(resourceId('Microsoft.Storage/storageAccounts/', variables('storageName'))).primaryEndpoints.blob]"
-                    }
                 }
             }
         },
@@ -216,7 +211,7 @@
             "fileUris": [
                 "[uri(variables('_artifactsLocation'), concat(variables('scriptNameSh'), variables('_artifactsLocationSasToken')))]"
             ],
-            "commandToExecute": "[concat('sh ', variables('scriptNameSh'), parameters('adminUsername'),' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('publicIP1'))).IpAddress)]"
+            "commandToExecute": "[concat('sh ', ' ', variables('scriptNameSh'), ' ',parameters('adminUsername'),' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('publicIP1'))).IpAddress)]"
             }
         }
         }
