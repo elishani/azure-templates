@@ -1,13 +1,17 @@
 #!/bin/bash
-exit
+
 
 user=$1
+if [ -z $user ]; then
+    echo "ERROR: Need paramter user"
+    exit 1
+fi
 ip=$2
 echo "User='$user'"
 echo "Ip='$ip'"
 user_home=/home/$user
 
-yum -y update
+#yum -y update
 yum install -y yum-utils device-mapper-persistent-data lvm2
 yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
 yum install -y  docker-ce docker-ce-cli containerd.io
