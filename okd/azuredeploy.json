@@ -211,7 +211,7 @@
             "fileUris": [
                 "[uri(variables('_artifactsLocation'), concat(variables('scriptNameSh'), variables('_artifactsLocationSasToken')))]"
             ],
-            "commandToExecute": "[concat('sh ', ' ', variables('scriptNameSh'), ' ',parameters('adminUsername'),' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('publicIP1'))).IpAddress)]"
+            "commandToExecute": "[concat('sh ', ' ', variables('scriptNameSh'), ' ',parameters('adminUsername'))]"
             }
         }
         }
