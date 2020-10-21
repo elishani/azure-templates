@@ -1,6 +1,5 @@
 #!/bin/bash
 
-sleep 60
 user=$1
 if [ -z $user ]; then
     echo "ERROR: Need paramter user"
@@ -11,7 +10,8 @@ echo "User='$user'"
 echo "Ip='$ip'"
 user_home=/home/$user
 
-#yum -y update
+sleep 60
+um -y update
 yum install -y yum-utils device-mapper-persistent-data lvm2
 yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
 yum install -y  docker-ce docker-ce-cli containerd.io

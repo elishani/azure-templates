@@ -66,7 +66,8 @@
                 "displayName": "PublicIPAddress"
             },
             "properties": {
-                "publicIPAllocationMethod": "Dynamic"
+                "publicIPAddressVersion": "IPv4",
+                "publicIPAllocationMethod": "Static"
             }
         },
         {
