@@ -1,6 +1,6 @@
 #!/bin/bash
 
-
+sleep 60
 user=$1
 if [ -z $user ]; then
     echo "ERROR: Need paramter user"
