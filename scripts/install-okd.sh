@@ -1,4 +1,5 @@
 #!/bin/bash
+exit
 
 user=$1
 ip=$2
