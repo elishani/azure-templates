@@ -11,12 +11,13 @@ echo "Ip='$ip'"
 user_home=/home/$user
 
 yum -y update --exclude=WALinuxAgent
-
 yum install -y yum-utils device-mapper-persistent-data lvm2
 yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
 yum install -y  docker-ce docker-ce-cli containerd.io
 
 usermod -aG docker $user
+systemctl start docker
+systemctl enable docker
 
 mkdir /etc/docker /etc/containers
 
@@ -36,7 +37,6 @@ EOF
 systemctl daemon-reload
 systemctl restart docker
 
-systemctl enable docker
 echo "net.ipv4.ip_forward = 1" | sudo tee -a /etc/sysctl.conf
  
 cd $user_home
@@ -51,8 +51,7 @@ cd $user_home
 file=$user_home/start_cluster
 echo "newgrp docker << END" > $file
 echo "oc cluster up" >> $file
-echo "sudo systemctl restart docker" >> $file
 echo "END" >> $file 
 
 su -c "bash $file" - $user
-
+systemctl restart docker
