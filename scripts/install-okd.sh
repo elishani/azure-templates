@@ -50,7 +50,7 @@ cd $user_home
 
 file=$user_home/start_cluster
 echo "newgrp docker << END" > $file
-echo "oc cluster up" >> $file
+echo "oc cluster up --public-hostname=$ip" >> $file
 echo "END" >> $file 
 
 su -c "bash $file" - $user
