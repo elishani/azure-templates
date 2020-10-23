@@ -53,5 +53,6 @@ echo "newgrp docker << END" > $file
 echo "oc cluster up --public-hostname=$ip" >> $file
 echo "END" >> $file 
 
+exit
 su -c "bash $file" - $user
 systemctl restart docker
