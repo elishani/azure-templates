@@ -8,16 +8,13 @@ fi
 ip=$2
 echo "User='$user'"
 echo "Ip='$ip'"
-user_home=/home/$user
-user_group=`grep "^$user" /etc/passwd | cut -d':' -f4`
+home=/home/$user
+owner_group=`grep "^$user" /etc/passwd | cut -d':' -f4`
 
 yum -y update --exclude=WALinuxAgent
 yum install -y yum-utils device-mapper-persistent-data lvm2
 yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
 yum install -y  docker-ce docker-ce-cli containerd.io
-
-docker_group=`grep docker /etc/group | cut -d':' -f 3`
-sed -i "s/:$user_group:/:$docker_group:/" /etc/passwd
 
 #usermod -aG docker $user
 systemctl start docker
@@ -42,15 +39,20 @@ systemctl daemon-reload
 systemctl restart docker
 
 echo "net.ipv4.ip_forward = 1" | sudo tee -a /etc/sysctl.conf
- 
-cd $user_home
+
+home=/home/$user
+owner_group=`grep "^$user" /etc/passwd | cut -d':' -f4
+docker_group=`grep docker /etc/group | cut -d':' -f 3`
+sed -i "s/:$owner_group:/:$docker_group:/" /etc/passwd
+
+cd $home
 wget https://github.com/openshift/origin/releases/download/v3.11.0/openshift-origin-client-tools-v3.11.0-0cbc58b-linux-64bit.tar.gz
 
 tar xvf openshift-origin-client-tools*.tar.gz
 cd openshift-origin-client-tools*
 mv  oc kubectl  /usr/local/bin/
 echo "PATH=$PATH:/usr/local/bin" >> /etc/profile
-cd $user_home
+cd $home
 
 echo "Running cluster"
 
@@ -59,7 +61,8 @@ cat > $home/run_cluster.sh <<EOF
 oc cluster up --public-hostname=$ip --routing-suffix=$ip.xip.io
 EOF
 
-cd $home 
+cd $home
+chown $owner_group:$docker_group run_cluster.sh
 su -c "bash -xv run_cluster.sh" - $user
 
 echo "****************** END ******************"
