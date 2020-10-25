@@ -51,8 +51,9 @@ wget https://github.com/openshift/origin/releases/download/v3.11.0/openshift-ori
 tar xvf openshift-origin-client-tools*.tar.gz
 cd openshift-origin-client-tools*
 mv  oc kubectl  /usr/local/bin/
-echo "PATH=$PATH:/usr/local/bin" >> /etc/profile
+echo "PATH=\$PATH:/usr/local/bin" >> /etc/profile
 cd $home
+systemctl restart docker
 
 echo "Running cluster"
 
