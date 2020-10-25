@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -xv
 
 user=$1
 if [ -z $user ]; then
