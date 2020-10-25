@@ -51,7 +51,16 @@ echo "PATH=$PATH:/usr/local/bin" >> /etc/profile
 cd $user_home
 
 echo "Running cluster"
-su -c "oc cluster up --public-hostname=$ip --routing-suffix=$ip.xip.io" - $user
+
+cat > $home/run_cluster.sh <<EOF
+#!/bin/bash
+oc cluster up --public-hostname=$ip --routing-suffix=$ip.xip.io
+EOF
+
+cd $home 
+su -c "bash -xv run_rke.sh" - $user
+
+#su -c "oc cluster up --public-hostname=$ip --routing-suffix=$ip.xip.io" - $user
 #file=$user_home/start_cluster
 #echo "newgrp docker << END" > $file
 #echo "oc cluster up --public-hostname=$ip --routing-suffix=$ip.xip.io" >> $file
