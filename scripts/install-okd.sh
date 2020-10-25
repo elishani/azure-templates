@@ -9,13 +9,15 @@ ip=$2
 echo "User='$user'"
 echo "Ip='$ip'"
 user_home=/home/$user
+user_group=`grep "^$user" /etc/passwd | cut -d':' -f4`
 
 yum -y update --exclude=WALinuxAgent
 yum install -y yum-utils device-mapper-persistent-data lvm2
 yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
 yum install -y  docker-ce docker-ce-cli containerd.io
 
-usermod -aG docker $user
+docker_group=`grep docker /etc/group | cut -d':' -f 3`
+#usermod -aG docker $user
 systemctl start docker
 systemctl enable docker
 
@@ -49,12 +51,12 @@ echo "PATH=$PATH:/usr/local/bin" >> /etc/profile
 cd $user_home
 
 echo "Running cluster"
+su -c "oc cluster up --public-hostname=$ip --routing-suffix=$ip.xip.io" - $user
+#file=$user_home/start_cluster
+#echo "newgrp docker << END" > $file
+#echo "oc cluster up --public-hostname=$ip --routing-suffix=$ip.xip.io" >> $file
+#echo "END" >> $file
 
-file=$user_home/start_cluster
-echo "newgrp docker << END" > $file
-echo "oc cluster up --public-hostname=$ip --routing-suffix=$ip.xip.io" >> $file
-echo "END" >> $file
-
-systemctl restart docker
+#systemctl restart docker
 
 echo "****************** END ******************"
