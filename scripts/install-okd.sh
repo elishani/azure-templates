@@ -48,9 +48,13 @@ mv  oc kubectl  /usr/local/bin/
 echo "PATH=$PATH:/usr/local/bin" >> /etc/profile
 cd $user_home
 
+echo "Running cluster"
+
 file=$user_home/start_cluster
 echo "newgrp docker << END" > $file
 echo "oc cluster up --public-hostname=$ip --routing-suffix=$ip.xip.io" >> $file
 echo "END" >> $file
 
 systemctl restart docker
+
+echo "****************** END ******************"
