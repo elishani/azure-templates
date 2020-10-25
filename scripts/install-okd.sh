@@ -17,6 +17,8 @@ yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce
 yum install -y  docker-ce docker-ce-cli containerd.io
 
 docker_group=`grep docker /etc/group | cut -d':' -f 3`
+sed -i "s/:$user_group:/:$docker_group:/" /etc/passwd
+
 #usermod -aG docker $user
 systemctl start docker
 systemctl enable docker
@@ -59,13 +61,5 @@ EOF
 
 cd $home 
 su -c "bash -xv run_cluster.sh" - $user
-
-#su -c "oc cluster up --public-hostname=$ip --routing-suffix=$ip.xip.io" - $user
-#file=$user_home/start_cluster
-#echo "newgrp docker << END" > $file
-#echo "oc cluster up --public-hostname=$ip --routing-suffix=$ip.xip.io" >> $file
-#echo "END" >> $file
-
-#systemctl restart docker
 
 echo "****************** END ******************"
