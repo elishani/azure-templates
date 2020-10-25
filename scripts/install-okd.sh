@@ -58,7 +58,7 @@ oc cluster up --public-hostname=$ip --routing-suffix=$ip.xip.io
 EOF
 
 cd $home 
-su -c "bash -xv run_rke.sh" - $user
+su -c "bash -xv run_cluster.sh" - $user
 
 #su -c "oc cluster up --public-hostname=$ip --routing-suffix=$ip.xip.io" - $user
 #file=$user_home/start_cluster
