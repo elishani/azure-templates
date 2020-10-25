@@ -50,9 +50,5 @@ cd $user_home
 
 file=$user_home/start_cluster
 echo "newgrp docker << END" > $file
-echo "oc cluster up --public-hostname=$ip" >> $file
-echo "END" >> $file 
-
-exit
-su -c "bash $file" - $user
-systemctl restart docker
+echo "oc cluster up --public-hostname=$ip --routing-suffix=$ip.xip.io" >> $file
+echo "END" >> $file
