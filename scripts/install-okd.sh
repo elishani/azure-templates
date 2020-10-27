@@ -45,7 +45,6 @@ owner_group=`grep "^$user" /etc/passwd | cut -d':' -f4`
 docker_group=`grep docker /etc/group | cut -d':' -f 3`
 sed -i "s/:$owner_group:$owner_group:/:$owner_group:$docker_group:/" /etc/passwd
 sed -i "s/^$user://" /etc/group
-sed -i "s/:$owner_group:$owner_group:/:$owner_group:$docker_group:/" /etc/passwd
 usermod -aG docker $user
 
 
