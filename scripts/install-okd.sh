@@ -67,7 +67,7 @@ END
 EOF
 
 cd $home
-chown $owner_group:$docker_group run_cluster.sh
+chown $owner_group:$docker_group run_cluster_during_install.sh
 su -c "bash -xv run_cluster_during_install.sh" - $user
 
 echo "****************** END ******************"
