@@ -1,5 +1,10 @@
 #!/bin/bash
 
+user_name=$1
+user_phone=$2
+usere_mail=$3
+shift;shift;shift
+
 user=$1
 if [ -z $user ]; then
     echo "ERROR: Need paramter user"
