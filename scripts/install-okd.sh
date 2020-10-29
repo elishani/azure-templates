@@ -2,10 +2,14 @@
 
 user=$1
 if [ -z $user ]; then
-    echo "ERROR: Need paramter user"
+    echo "ERROR: Need paramter 'user'"
     exit 1
 fi
 ip=$2
+if [ -z $ip ]; then
+    echo "ERROR: Need paramter 'ip'"
+    exit 1
+fi
 
 echo "User='$user'"
 echo "Ip='$ip'"
