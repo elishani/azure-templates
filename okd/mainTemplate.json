@@ -2,76 +2,75 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-    "vmName": {
+        "vmName": {
         "type": "string",
         "defaultValue": "eli",
         "metadata": {
           "description": "Specifies a VM name."
-          }
-      },
-    "adminUsername": {
-      "type": "string",
-      "defaultValue": "okdadmin",
-      "metadata": {
+        } 
+        },
+        "adminUsername": {
+        "type": "string",
+        "defaultValue": "okdadmin",
+        "metadata": {
         "description": "Username for the Virtual Machine."
-            }  
-    },
-    "authenticationType": {
-      "type": "string",
-      "defaultValue": "sshPublicKey",
-      "allowedValues": [
+        }  
+        },
+        "authenticationType": {
+        "type": "string",
+        "defaultValue": "sshPublicKey",
+        "allowedValues": [
         "sshPublicKey",
         "password"
-      ],
-      "metadata": {
-        "description": "Type of authentication to use on the Virtual Machine. SSH key is recommended."
-      }
-    },
-    "adminPasswordOrKey": {
-      "type": "securestring",
-      "metadata": {
+        ],
+        "metadata": {
+            "description": "Type of authentication to use on the Virtual Machine. SSH key is recommended."
+        }
+        },
+        "adminPasswordOrKey": {
+        "type": "securestring",
+        "metadata": {
         "description": "SSH Key or password for the Virtual Machine. SSH key is recommended."
             }
+        },
+        "virtualMachineSize": {
+        "type": "string",
+        "defaultValue": "Standard_D3_v2",
+        "allowedValues": [
+            "Standard_A4_v2",
+            "Standard_A8_v2",
+            "Standard_D1_v2",
+            "Standard_D2_v2",
+            "Standard_D3_v2",
+            "Standard_D4_v2",
+            "Standard_D5_v2",
+            "Standard_D12_v2",
+            "Standard_D13_v2"
+        ],
+        "metadata": {
+            "description": "This is the headnode Azure Virtual Machine size, and will affect the cost. If you don't know, just leave the default value."
+            }
+        }  
     },
-    "VirtualMachineSize": {
-      "type": "string",
-      "defaultValue": "Standard_D3_v2",
-      "allowedValues": [
-        "Standard_A4_v2",
-        "Standard_A8_v2",
-        "Standard_D1_v2",
-        "Standard_D2_v2",
-        "Standard_D3_v2",
-        "Standard_D4_v2",
-        "Standard_D5_v2",
-        "Standard_D12_v2",
-        "Standard_D13_v2"
-      ],
-      "metadata": {
-        "description": "This is the headnode Azure Virtual Machine size, and will affect the cost. If you don't know, just leave the default value."
-          }
-        }
-   },
     "functions": [],
     "variables": {
         "location": "[resourceGroup().location]", 
-        "vmName": "[parameters('vmName')]",
+        "vmName1": "[parameters('vmName')]",
         "imagePublisher": "OpenLogic",
         "imageOffer": "CentOS",
         "imageSKU": "7.5",
-        "vmSize": "[parameters('virtualMachineSize')]",
-        "publicIP1": "[concat(variables('vmName'), '-PublicIP')]",
-        "nsgName": "[concat(variables('vmName'), '-NSG')]",
-        "VirtualNetworkName": "[concat(variables('vmName'), '-VirtualNetwork')]",
-        "interfaceName1": "[concat(variables('vmName'), '-NetworkInterface')]",
+        "imageSize": "[parameters('virtualMachineSize')]",
+        "publicIP1": "[concat(variables('vmName1'), '-PublicIP')]",
+        "nsgName": "[concat(variables('vmName1'), '-NSG')]",
+        "VirtualNetworkName": "[concat(variables('vmName1'), '-VirtualNetwork')]",
+        "interfaceName1": "[concat(variables('vmName1'), '-NetworkInterface')]",
         "subNetName": "[concat(variables('VirtualNetworkName'), '-Subnet')]",
-        "_artifactsLocation": "https://raw.githubusercontent.com/elishani/azure-templates/master/scripts/",
         "scriptName": "install-okd",
         "scriptNameSh": "[concat(variables('scriptName'), '.sh')]",
-        "_artifactsLocationSasToken": "",
+        "scriptUri": "[concat('https://raw.githubusercontent.com/elishani/azure-templates/master/scripts/',variables('scriptNameSh'))]",
         "linuxConfiguration": {
-          "disablePasswordAuthentication": true,
-          "ssh": {
+        "disablePasswordAuthentication": true,
+        "ssh": {
             "publicKeys": [
              {
               "path": "[concat('/home/', parameters('adminUsername'), '/.ssh/authorized_keys')]",
@@ -180,21 +179,21 @@
         },
         {
             "type": "Microsoft.Compute/virtualMachines",
-            "name": "[variables('vmName')]",
+            "name": "[variables('vmName1')]",
             "apiVersion": "2019-07-01",
             "location": "[variables('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/networkInterfaces', variables('interfaceName1'))]"
             ],
             "tags": {
-                "displayName": "[variables('vmName')]"
+                "displayName": "[variables('vmName1')]"
             },
             "properties": {
                 "hardwareProfile": {
-                    "vmSize": "[variables('vmSize')]"
+                    "vmSize": "[variables('imageSize')]"
                 },
                 "osProfile": {
-                    "computerName": "[variables('vmName')]",
+                    "computerName": "[variables('vmName1')]",
                     "adminUsername": "[parameters('adminUsername')]",
                     "adminPassword": "[parameters('adminPasswordOrKey')]",
                     "linuxConfiguration": "[if(equals(parameters('authenticationType'), 'password'), json('null'), variables('linuxConfiguration'))]"
@@ -207,7 +206,7 @@
             "version": "latest"
                     },
                     "osDisk": {
-                        "name": "[concat(variables('vmName'), '-OSDisk')]",
+                        "name": "[concat(variables('vmName1'), '-OSDisk')]",
                         "caching": "ReadWrite",
                         "createOption": "FromImage"
                     }
@@ -223,11 +222,11 @@
         },
         {
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(variables('vmName'), '/', variables('scriptName'))]",
+            "name": "[concat(variables('vmName1'), '/', variables('scriptName'))]",
             "apiVersion": "2020-06-01",
             "location": "[variables('location')]",
             "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/',variables('vmName'))]"
+                "[concat('Microsoft.Compute/virtualMachines/',variables('vmName1'))]"
             ],
             "properties": {
             "publisher": "Microsoft.Azure.Extensions",
@@ -236,9 +235,9 @@
             "autoUpgradeMinorVersion": true,
             "settings": {
             "fileUris": [
-                "[uri(variables('_artifactsLocation'), concat(variables('scriptNameSh'), variables('_artifactsLocationSasToken')))]"
+                "[variables('scriptUri')]"
             ],
-            "commandToExecute": "[concat('sh ',' ', variables('scriptNameSh'),' ',parameters('UserName'),' ',parameters('UserPhoneNumber'),' ',parameters('UserEmail'),' ',parameters('adminUsername'),' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('publicIP1'))).IpAddress)]"
+            "commandToExecute": "[concat('sh ', ' ', variables('scriptNameSh'), ' ',parameters('adminUsername'),' ',reference(resourceId('Microsoft.Network/publicIPAddresses',variables('publicIP1'))).IpAddress)]"
             }
         }
         }
