@@ -19,7 +19,6 @@
                         "type": "Microsoft.Common.TextBox",
                         "label": "Virtual Machines name",
                         "toolTip": "The name of the Virtual Machines which ended with numbre 1-3 exp: rancher1",
-                        "defaultValue": "okd",
                         "constraints": {
                             "required": true,
                             "regex": "^[a-z0-9A-Z-]{3,79}$",
